@@ -110,18 +110,18 @@ number:  DIGIT
          ;
 
 %%
-main()
+int main()
 {
  return(yyparse());
 }
 
-yyerror(s)
+int yyerror(s)
 char *s;
 {
   fprintf(stderr, "%s\n",s);
 }
 
-yywrap()
+int yywrap()
 {
   return(1);
 }

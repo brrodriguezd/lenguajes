@@ -20,7 +20,7 @@
 
 #define YYPURE 0
 
-#line 2 "parser.y"
+#line 2 "parser.yacc"
 #include<stdio.h>
 
 int regs[26];
@@ -32,7 +32,7 @@ int base;
 #endif
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
-#line 11 "parser.y"
+#line 11 "parser.yacc"
 typedef union YYSTYPE { int a; } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
 #line 39 "y.tab.c"
@@ -371,19 +371,19 @@ static YYINT  *yylexp = 0;
 
 static YYINT  *yylexemes = 0;
 #endif /* YYBTYACC */
-#line 113 "parser.y"
-main()
+#line 113 "parser.yacc"
+int main()
 {
  return(yyparse());
 }
 
-yyerror(s)
+int yyerror(s)
 char *s;
 {
   fprintf(stderr, "%s\n",s);
 }
 
-yywrap()
+int yywrap()
 {
   return(1);
 }
@@ -1058,35 +1058,35 @@ yyreduce:
     switch (yyn)
     {
 case 3:
-#line 29 "parser.y"
+#line 29 "parser.yacc"
 	{
            yyerrok;
          }
 #line 1066 "y.tab.c"
 break;
 case 4:
-#line 34 "parser.y"
+#line 34 "parser.yacc"
 	{
            printf("%d\n",yystack.l_mark[0]);
          }
 #line 1073 "y.tab.c"
 break;
 case 5:
-#line 39 "parser.y"
+#line 39 "parser.yacc"
 	{
            regs[yystack.l_mark[-2].a] = yystack.l_mark[0].a;
          }
 #line 1080 "y.tab.c"
 break;
 case 6:
-#line 46 "parser.y"
+#line 46 "parser.yacc"
 	{
            yyval = yystack.l_mark[-1];
          }
 #line 1087 "y.tab.c"
 break;
 case 7:
-#line 51 "parser.y"
+#line 51 "parser.yacc"
 	{
 
            yyval.a = yystack.l_mark[-2].a * yystack.l_mark[0].a;
@@ -1094,63 +1094,63 @@ case 7:
 #line 1095 "y.tab.c"
 break;
 case 8:
-#line 57 "parser.y"
+#line 57 "parser.yacc"
 	{
            yyval.a = yystack.l_mark[-2].a / yystack.l_mark[0].a;
          }
 #line 1102 "y.tab.c"
 break;
 case 9:
-#line 62 "parser.y"
+#line 62 "parser.yacc"
 	{
            yyval.a = yystack.l_mark[-2].a % yystack.l_mark[0].a;
          }
 #line 1109 "y.tab.c"
 break;
 case 10:
-#line 67 "parser.y"
+#line 67 "parser.yacc"
 	{
            yyval.a = yystack.l_mark[-2].a + yystack.l_mark[0].a;
          }
 #line 1116 "y.tab.c"
 break;
 case 11:
-#line 72 "parser.y"
+#line 72 "parser.yacc"
 	{
            yyval.a = yystack.l_mark[-2].a - yystack.l_mark[0].a;
          }
 #line 1123 "y.tab.c"
 break;
 case 12:
-#line 77 "parser.y"
+#line 77 "parser.yacc"
 	{
            yyval.a = yystack.l_mark[-2].a & yystack.l_mark[0].a;
          }
 #line 1130 "y.tab.c"
 break;
 case 13:
-#line 82 "parser.y"
+#line 82 "parser.yacc"
 	{
            yyval.a = yystack.l_mark[-2].a | yystack.l_mark[0].a;
          }
 #line 1137 "y.tab.c"
 break;
 case 14:
-#line 88 "parser.y"
+#line 88 "parser.yacc"
 	{
            yyval.a = -yystack.l_mark[0].a;
          }
 #line 1144 "y.tab.c"
 break;
 case 15:
-#line 93 "parser.y"
+#line 93 "parser.yacc"
 	{
            yyval.a = regs[yystack.l_mark[0].a];
          }
 #line 1151 "y.tab.c"
 break;
 case 17:
-#line 102 "parser.y"
+#line 102 "parser.yacc"
 	{
            yyval = yystack.l_mark[0];
            base = (yystack.l_mark[0].a==0) ? 8 : 10;
@@ -1158,7 +1158,7 @@ case 17:
 #line 1159 "y.tab.c"
 break;
 case 18:
-#line 107 "parser.y"
+#line 107 "parser.yacc"
 	{
            yyval.a = base * yystack.l_mark[-1].a + yystack.l_mark[0].a;
          }

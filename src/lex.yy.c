@@ -438,8 +438,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "lexer.l"
-#line 2 "lexer.l"
+#line 1 "lexer.lex"
+#line 2 "lexer.lex"
 
 #include <stdio.h>
 #include "y.tab.h"
@@ -662,7 +662,7 @@ YY_DECL
 		}
 
 	{
-#line 7 "lexer.l"
+#line 7 "lexer.lex"
 
 #line 667 "lex.yy.c"
 
@@ -723,12 +723,12 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 8 "lexer.l"
+#line 8 "lexer.lex"
 ;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 9 "lexer.l"
+#line 9 "lexer.lex"
 {
             c = yytext[0];
             yylval.a = c - 'a';
@@ -737,7 +737,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 14 "lexer.l"
+#line 14 "lexer.lex"
 {
             c = yytext[0];
             yylval.a = c - '0';
@@ -747,7 +747,7 @@ YY_RULE_SETUP
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 19 "lexer.l"
+#line 19 "lexer.lex"
 {
                  c = yytext[0];
                  return(c);
@@ -755,7 +755,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 23 "lexer.l"
+#line 23 "lexer.lex"
 ECHO;
 	YY_BREAK
 #line 761 "lex.yy.c"
@@ -1763,5 +1763,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 23 "lexer.l"
+#line 23 "lexer.lex"
 

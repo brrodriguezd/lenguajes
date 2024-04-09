@@ -1,20 +1,23 @@
-%{ 
-  #include<stdio.h> 
-  #include "y.tab.h" 
-  void yyerror(char *);
-%} 
+%{
 
-%option noyywrap
-/* Unicamente leera un archivo de entrada*/
-
-DIGIT   [0-9]
-NUM     {DIGIT}+("."{DIGIT}+)?
-
-/* Rule Section */
-%% 
-{NUM}               { yylval=atoi(yytext); return NUMBER; } 
-[-()+*/;]            { return *yytext; }
-"evaluar"            { return EVALUAR; }
-[[:blank:]] ;
-.                     yyerror("Unknown character");
+#include <stdio.h>
+#include "y.tab.h"
+int c;
+%}
+%%
+" "       ;
+[a-z]     {
+            c = yytext[0];
+            yylval.a = c - 'a';
+            return(LETTER);
+          }
+[0-9]     {
+            c = yytext[0];
+            yylval.a = c - '0';
+            return(DIGIT);
+          }
+[^a-z0-9\b]    {
+                 c = yytext[0];
+                 return(c);
+              }
 %%

@@ -76,8 +76,11 @@ int PopBack(linked_list *lista) {
     return -1;
   }
   if (lista->tail == lista->head) {
+    nodo *delete = lista->head;
+    int dato = delete->dato;
     lista->tail = lista->head = NULL;
-    return -1;
+    free(delete);
+    return dato;
   }
   nodo *recorrer = lista->head;
   while (recorrer->next->next != NULL) {

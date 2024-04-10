@@ -10,15 +10,13 @@ DIGITO [0-9]
 /*CADENA {MINUSCULAS}*/
 %%
 " "       ; 
-
 {MINUSCULAS}  {
                 c = yytext[0];
-                yylval.c = c - 'a';
+                yylval.a = c - 'a';
                 return(CADENA);
               }
 [^a-z0-9\b]   {
                 c = yytext[0];
                 return(c);
               }
-
 %%

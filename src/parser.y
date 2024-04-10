@@ -1,13 +1,16 @@
 %{
-#include<stdio.h>
+#include <stdio.h>
+#include "./lib/linked_list.c"
 
 int regs[26] = {0}; //26 del alfabeto
+char* string;
 int caracter;
+linked_list lista;
 %}
 
 %start list
 
-%union { int a; int c;} /*Definición de tipos*/
+%union { int a;} /*Definición de tipos*/
 
 
 %token CADENA /*Lo que recibe del lexer*/ 
@@ -31,29 +34,28 @@ list:                       /*empty */
          ;
 stat:   racha
          {
-            for (char i = 0; i < 26; i++){
-              if(regs[i] > 0){
-                printf("%c: %d\n", i + 'a', regs[i]);
-                regs[i] = 0;
-              }
-            }
+          struct Nodo *recorrer = lista.head;
+          while (recorrer != NULL){
+            printf("%c: %d\n",recorrer->dato, recorrer->next->dato);
+            recorrer = recorrer->next->next;
+          }
          }
          ;
 racha:  CADENA
         {
-          $$.c = 1;
-          caracter = $1.c;
-          regs[caracter] = 1;
+          caracter = $1.a;
+          PushBack(&lista, ($1.a + 'a'));
+          PushBack(&lista, 1);
         }
         |
         racha CADENA
         {
-          $$.c += 1;
-          if (caracter == $2.c){
-            regs[caracter] += 1;
+          if (caracter == $2.a){
+            lista.tail->dato += 1;
           }else{ 
-            caracter = $2.c;
-            regs[caracter] = 1;
+            caracter = $2.a;
+            PushBack(&lista, ($2.a + 'a'));
+            PushBack(&lista, 1);
           }
         }
         ;
@@ -61,6 +63,7 @@ racha:  CADENA
 %%
 int main()
 {
+ create_list(&lista);
  return(yyparse());
 }
 

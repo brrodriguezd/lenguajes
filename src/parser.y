@@ -34,15 +34,16 @@ list:                       /*empty */
          ;
 stat:   racha
          {
-          struct Nodo *recorrer = lista.head;
-          while (recorrer != NULL){
-            printf("%c: %d\n",recorrer->dato, recorrer->next->dato);
-            recorrer = recorrer->next->next;
+          while (lista.head != NULL){
+            int c = PopFront(&lista);
+            int d = PopFront(&lista);
+            printf("%c: %d\n", c, d);
           }
          }
          ;
 racha:  CADENA
         {
+          create_list(&lista);
           caracter = $1.a;
           PushBack(&lista, ($1.a));
           PushBack(&lista, 1);
@@ -63,7 +64,6 @@ racha:  CADENA
 %%
 int main()
 {
- create_list(&lista);
  return(yyparse());
 }
 

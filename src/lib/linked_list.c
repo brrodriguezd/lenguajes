@@ -37,15 +37,19 @@ int TopFront(linked_list *lista) {
   }
   return lista->head->dato;
 }
-void PopFront(linked_list *lista) {
+int PopFront(linked_list *lista) {
   if (lista->head == NULL) {
     printf("ERROR: Está vacio");
-    return;
+    return -1;
   }
+  nodo *delete = lista->head;
+  int dato = delete->dato;
   lista->head = lista->head->next;
+  free(delete);
   if (lista->head == NULL) {
     lista->tail = NULL;
   }
+  return dato;
 }
 void PushBack(linked_list *lista, int dato) {
   nodo *nodo_nuevo;
@@ -66,21 +70,25 @@ int TopBack(linked_list *lista) {
   }
   return lista->tail->dato;
 }
-void PopBack(linked_list *lista) {
+int PopBack(linked_list *lista) {
   if (lista->head == NULL) {
     printf("ERROR: Está vacio");
-    return;
+    return -1;
   }
   if (lista->tail == lista->head) {
     lista->tail = lista->head = NULL;
-    return;
+    return -1;
   }
   nodo *recorrer = lista->head;
   while (recorrer->next->next != NULL) {
     recorrer = recorrer->next;
   }
+  nodo *delete = recorrer->next;
+  int dato = delete->dato;
   recorrer->next = NULL;
+  free(delete);
   lista->tail = recorrer;
+  return dato;
 }
 nodo *Find(linked_list *lista, int dato) {
   nodo *recorrer = lista->head;
@@ -106,7 +114,9 @@ void Erase(linked_list *lista, int dato) {
   while (recorrer->next != NULL) {
     if (recorrer->next->dato == dato) {
       if (recorrer->next == lista->tail) {
+        nodo *delete = recorrer->next;
         recorrer->next = NULL;
+        free(delete);
         lista->tail = recorrer;
         return;
       }

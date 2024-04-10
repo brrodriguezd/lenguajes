@@ -44,7 +44,7 @@ stat:   racha
 racha:  CADENA
         {
           caracter = $1.a;
-          PushBack(&lista, ($1.a + 'a'));
+          PushBack(&lista, ($1.a));
           PushBack(&lista, 1);
         }
         |
@@ -54,7 +54,7 @@ racha:  CADENA
             lista.tail->dato += 1;
           }else{ 
             caracter = $2.a;
-            PushBack(&lista, ($2.a + 'a'));
+            PushBack(&lista, ($2.a));
             PushBack(&lista, 1);
           }
         }

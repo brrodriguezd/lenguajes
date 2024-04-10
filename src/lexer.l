@@ -12,7 +12,7 @@ DIGITO [0-9]
 " "       ; 
 {MINUSCULAS}  {
                 c = yytext[0];
-                yylval.a = c - 'a';
+                yylval.a = c;
                 return(CADENA);
               }
 [^a-z0-9\b]   {

@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "./lib/linked_list.c"
 
+int yylex(void);
+int yyerror(char* s);
 int regs[26] = {0}; //26 del alfabeto
 char* string;
 int caracter;
@@ -10,10 +12,13 @@ linked_list lista;
 
 %start list
 
-%union { int a;} /*Definición de tipos*/
+%union { int a; char* s; int b;} /*Definición de tipos*/
 
 
-%token CADENA /*Lo que recibe del lexer*/ 
+%token <a> CADENA
+%token <a> ASIGNACION
+%token <a> EXPRESION
+%token <a> CONDICION /*Lo que recibe del lexer*/ 
 
 %left '|' /*%left es el orden de operación -> izq a derecha*/
 %left '&'
@@ -44,18 +49,18 @@ stat:   racha
 racha:  CADENA
         {
           create_list(&lista);
-          caracter = $1.a;
-          PushBack(&lista, ($1.a));
+          caracter = $1;
+          PushBack(&lista, ($1));
           PushBack(&lista, 1);
         }
         |
         racha CADENA
         {
-          if (caracter == $2.a){
+          if (caracter == $2){
             lista.tail->dato += 1;
           }else{ 
-            caracter = $2.a;
-            PushBack(&lista, ($2.a));
+            caracter = $2;
+            PushBack(&lista, ($2));
             PushBack(&lista, 1);
           }
         }

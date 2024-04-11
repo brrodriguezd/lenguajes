@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 echo corriendo yacc...
-yacc -d parser.y
+bison -d parser.y
 echo corriendo lex...
-lex lexer.l
+flex lexer.l
 echo compilando...
-cc y.tab.c lex.yy.c
+cc parser.tab.c lex.yy.c

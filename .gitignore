@@ -2,3 +2,5 @@
 !**/linked_list.c
 **.h
 **.out
+**/__pychache__/
+**/.venv/

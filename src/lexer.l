@@ -12,6 +12,7 @@ DIGITO [0-9]
 ENTERO {DIGITO}+
 FLOTANTE {DIGITO}+"."{DIGITO}+
 CADENA {MINUSCULAS}+
+COMENTARIO ["//".*\n]
 IF      IF
 ELSE ELSE
 FOR FOR
@@ -36,6 +37,9 @@ SHOW SHOW
               }
 {SHOW}        {
                 return(SHOW);
+              }
+{COMENTARIO}  {
+                return;
               }
 {CADENA}      {
                 yylval.s = yytext;

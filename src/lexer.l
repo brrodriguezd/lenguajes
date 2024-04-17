@@ -21,28 +21,29 @@ SHOW SHOW
 /**/
 %%
 {FLOTANTE}    {
-                yylval.f = atof(yytext);
+                float value_f = atof(yytext);
+                yylval.f = value_f;
                 return (FLOTANTE);
               }
 {ENTERO}      {
-                yylval.f = atoi(yytext);
+                int value_i = atoi(yytext);
+                yylval.i = value_i;
                 return (ENTERO);
               }
-{ESPACIOS}    {
-                return (ESPACIOS);
-              } 
 {ALFABETO}    {
-                yylval.a = yytext[0];
+                int value_a = yytext[0];
+                yylval.a = value_a;
                 return (ALFABETO);
               }
-{SHOW}        {
-                return(SHOW);
-              }
-{COMENTARIO}  {
-                return;
-              }
 {CADENA}      {
-                yylval.s = yytext;
+                int size = strlen(yytext);
+                char value_s [size];
+                int i = 0;
+                for (char *iter = yytext; *iter != '\0'; iter++){
+                  value_s[i] = *iter;
+                  i++;
+                }
+                yylval.s = value_s;
                 return(CADENA);
               }
 [^a-z0-9\b]   {

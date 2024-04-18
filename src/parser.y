@@ -28,7 +28,7 @@ linked_list lista;
 %left '+' '-'
 %left '*' '/' '%'
 
-%type<i> racha
+%type<s> racha
 %type<s> expr
 %type<i> expre
 %type<f> exprf
@@ -57,23 +57,35 @@ stat:    expr
           printf("exprf: %f\n", $1);
          }
          |
-         racha 
+         racha '?'
          {
-          printf("numero de rachas: %d\n", $1);
+          create_list(&lista);
+          caracter = $1[0];
+          PushBack(&lista, caracter);
+          PushBack(&lista, 0);
+          for (char *iter = $1; *iter != '\0'; iter++){
+            if(*iter == caracter){
+              lista.tail->dato +=1;
+            }else{
+              caracter = *iter;
+              PushBack(&lista, caracter);
+              PushBack(&lista, 1);
+            }
+          }
+          while (lista.head != NULL){
+            int c = PopFront(&lista);
+            int d = PopFront(&lista);
+            printf("%c: %d\n", c, d);
+          }
          }
          ;
 
-expr:   '(' expr ')'
-        {
-          $$ = $2;
-        }
-        |
-        expr '*' expr 
+expr:   expr '*' expr 
         {
           int size = strlen($1) + strlen($3);
           printf("s1: %s, s2: %s\n", $1,$3);
           printf("size: %d\n", size);
-          char *  new_str = malloc(size*sizeof(char));
+          char new_str [size];
           int i = 0;
           for (char *iter = $1; *iter != '\0'; iter++ ){
             printf("char %d: %c\n", i, *iter);
@@ -85,9 +97,7 @@ expr:   '(' expr ')'
             new_str[i] = *iter;
             i++;
           }
-          printf("%s\n",new_str);
           $$ = new_str;
-          printf("%s\n",$$);
         }
         |
         CADENA
@@ -146,28 +156,10 @@ exprf:  '(' exprf ')'
         |
         FLOTANTE
         ;
-racha:  CADENA '?'{
-          create_list(&lista);
-          $$ = 1;
-          caracter = $1[0];
-          PushBack(&lista, caracter);
-          PushBack(&lista, 0);
-          for (char *iter = $1; *iter != '\0'; iter++){
-            if(*iter == caracter){
-              lista.tail->dato +=1;
-            }else{
-              $$++;
-              caracter = *iter;
-              PushBack(&lista, caracter);
-              PushBack(&lista, 1);
-            }
-          }
-          while (lista.head != NULL){
-            int c = PopFront(&lista);
-            int d = PopFront(&lista);
-            printf("%c: %d\n", c, d);
-          }
-        }
+racha:  CADENA{
+  printf("cadena: %s\n", $1);
+  $$ = $1;
+}
         ;
 
 %%

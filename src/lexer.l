@@ -14,10 +14,10 @@ FLOTANTE   {DIGITO}+"."{DIGITO}+
 CADENA     {MINUSCULAS}+
 COMENTARIO ["//".*]
 
-IF      if
-ELSE    else
-FOR     for
-WHILE   while
+IF      IF
+ELSE    ELSE
+FOR     FOR
+WHILE   WHILE
 SHOW    SHOW
 
 EQUAL        "=="

@@ -39,6 +39,8 @@ linked_list lista;
 %type<s> expr
 %type<i> expre
 %type<f> exprf
+
+
 %%                   /* beginning of rules section */
 
 list:                       /*empty */
@@ -79,16 +81,16 @@ stat:    expr
 if_stat: IF '(' condition ')' stat
          {
          if ($3){
-            $5
+            $$ = $5;
           }
          }
          |
          IF '(' condition ')' stat ELSE stat
          {
          if ($3){
-            $5
+            $$ = $5;
           }else{
-            $7
+            $$ = $7;
           }
          }
          ;

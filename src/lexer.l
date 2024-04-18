@@ -13,56 +13,47 @@ ENTERO     {DIGITO}+
 FLOTANTE   {DIGITO}+"."{DIGITO}+
 CADENA     {MINUSCULAS}+
 COMENTARIO ["//".*]
-
-IF      if
-ELSE    else
-FOR     for
-WHILE   while
-SHOW    SHOW
-
-EQUAL        "=="
-NOTEQUAL     "!="
-LESSEQUAL    "<="
-GREATEREQUAL ">="
-
 /**/
 %%
 {FLOTANTE}    {
-                yylval.f = atof(yytext);
+                float value_f = atof(yytext);
+                yylval.f = value_f;
                 return (FLOTANTE);
               }
 {ENTERO}      {
-                yylval.f = atoi(yytext);
+                int value_i = atoi(yytext);
+                yylval.i = value_i;
                 return (ENTERO);
               }
-{ESPACIOS}    {
-                return (ESPACIOS);
-              } 
+{ESPACIOS}    ;
 {ALFABETO}    {
-                yylval.a = yytext[0];
+                int A = yytext[0];
+                yylval.a = A;
                 return (ALFABETO);
               }
-{SHOW}        {
-                return(SHOW);
-              }
-{COMENTARIO}  {
-                return;
-              }
+
+{COMENTARIO}  { return (COMENTARIO); }
 {CADENA}      {
                 int size = strlen(yytext);
-                char value_s[size];
+                char *value_s = malloc(size*sizeof(char));
                 int i = 0;
                 for (char *iter = yytext; *iter != '\0'; iter++) {
                   value_s[i] = *iter;
                   i++;
                 }
-                yylval.s = yytext;
+                yylval.s = value_s;
                 return(CADENA);
               }
-{EQUAL}        { return(EQUAL); }
-{NOTEQUAL}     { return(NOTEQUAL); }
-{LESSEQUAL}    { return(LESSEQUAL); }
-{GREATEREQUAL} { return(GREATEREQUAL); }
+
+IF            { return(IF); }
+ELSE          { return(ELSE); }
+FOR           { return(FOR); }
+WHILE         { return(WHILE); }
+
+"=="          { return(EQUAL); }
+"!="          { return(NOTEQUAL); }
+"<="          { return(LESSEQUAL); }
+">="          { return(GREATEREQUAL); }
 
 [^a-z0-9\b]   {
                 c = yytext[0];

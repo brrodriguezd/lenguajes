@@ -23,13 +23,18 @@ linked_list lista;
 %token <a> ALFABETO
 %token <i> ENTERO 
 %token <f> FLOTANTE
-%token <s> COMENTARIO
 %token <s> ESPACIOS
 
-%token <i> EQUAL
-%token <i> NOTEQUAL
-%token <i> LESSEQUAL
-%token <i> GREATEREQUAL
+%token IF
+%token ELSE
+%token FOR
+%token WHILE
+%token COMENTARIO
+
+%token EQUAL
+%token NOTEQUAL
+%token LESSEQUAL
+%token GREATEREQUAL
 
 %left '?'
 %left '+' '-'
@@ -38,7 +43,9 @@ linked_list lista;
 %type<s> racha
 %type<s> expr
 %type<i> expre
+%type<i> if_expre
 %type<f> exprf
+%type<i> condition
 %%                   /* beginning of rules section */
 
 list:                       /*empty */
@@ -64,7 +71,9 @@ stat:    expr
           printf("exprf: %f\n", $1);
          }
          |
-         if_stat
+         if_expre{
+          printf("if_expre: %d\n", $1);
+         }
          |
          racha
          {
@@ -75,60 +84,12 @@ stat:    expr
           }
          }
          ;
-
-if_stat: IF '(' condition ')' stat
-         {
-         if ($3){
-            $5
-          }
-         }
-         |
-         IF '(' condition ')' stat ELSE stat
-         {
-         if ($3){
-            $5
-          }else{
-            $7
-          }
-         }
-         ;
-condition: expr EQUAL expr
-           {
-             $$ = $1 == $3;
-           }
-           |
-           expr NOTEQUAL expr
-           {
-             $$ = $1 != $3;
-           }
-           |
-           expr LESSEQUAL expr
-           {
-             $$ = $1 <= $3;
-           }
-           |
-           expr GREATEREQUAL expr
-           {
-             $$ = $1 >= $3;
-           }
-           |
-           expr '<' expr
-           {
-             $$ = $1 < $3;
-           }
-           |
-           expr '>' expr
-           {
-             $$ = $1 > $3;
-           }
-           ; 
-
 expr:   expr '*' expr 
         {
           int size = strlen($1) + strlen($3);
           printf("s1: %s, s2: %s\n", $1, $3);
           printf("size: %d\n", size);
-          char new_str[size];
+          char *new_str = malloc(size*sizeof(char));
           int i = 0;
           for (char *iter = $1; *iter != '\0'; iter++) {
             printf("char %d: %c\n", i, *iter);
@@ -171,7 +132,79 @@ expre:  '(' expre ')'
         }
         |
         ENTERO
+        |
         ;
+if_expre: IF '(' condition ')' '{' expre '}'
+         {
+          if ($3 == 1){
+            $$ = $6;
+          }
+         }
+         |
+         IF '(' condition ')' '{' expre '}' ELSE '{' expre '}'
+         {
+         if ($3 == 1){
+            $$ = $6;
+          }else{
+            $$ = $10;
+          }
+         }
+         ;
+condition: expre EQUAL expre
+           {
+             if ($1 == $3){
+              $$ = 1;
+             }else{
+              $$ = 0;
+             }
+           }
+           |
+           expr NOTEQUAL expr
+           {
+             if ($1 != $3){
+              $$ = 1;
+             }else{
+              $$ = 0;
+             }
+           }
+           |
+           expr LESSEQUAL expr
+           {
+             if ($1 <= $3){
+              $$ = 1;
+             }else{
+              $$ = 0;
+             }
+           }
+           |
+           expr GREATEREQUAL expr
+           {
+             if ($1 >= $3){
+              $$ = 1;
+             }else{
+              $$ = 0;
+             }
+           }
+           |
+           expr '<' expr
+           {
+             if ($1 < $3){
+              $$ = 1;
+             }else{
+              $$ = 0;
+             }
+           }
+           |
+           expr '>' expr
+           {
+             if ($1 > $3){
+              $$ = 1;
+             }else{
+              $$ = 0;
+             }
+           }
+           ; 
+
 exprf:  '(' exprf ')'
         {
           $$ = $2;

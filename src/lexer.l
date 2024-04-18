@@ -37,7 +37,7 @@ SHOW SHOW
               }
 {CADENA}      {
                 int size = strlen(yytext);
-                char value_s [size];
+                char *value_s =malloc(size* (sizeof(char)));
                 int i = 0;
                 for (char *iter = yytext; *iter != '\0'; iter++){
                   value_s[i] = *iter;

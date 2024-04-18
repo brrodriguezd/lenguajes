@@ -126,23 +126,23 @@ condition: expr EQUAL expr
 expr:   expr '*' expr 
         {
           int size = strlen($1) + strlen($3);
-          printf("s1: %s, s2: %s\n", $1,$3);
+          printf("s1: %s, s2: %s\n", $1, $3);
           printf("size: %d\n", size);
-          char new_str [size];
+          char new_str[size];
           int i = 0;
-          for (char *iter = $1; *iter != '\0'; iter++ ){
+          for (char *iter = $1; *iter != '\0'; iter++) {
             printf("char %d: %c\n", i, *iter);
             new_str[i] = *iter;
             i++;
           }
-          for (char *iter = $3; *iter !='\0'; iter++ ){
+          for (char *iter = $3; *iter != '\0'; iter++) {
             printf("char %d: %c\n", i, *iter);
             new_str[i] = *iter;
             i++;
           }
           $$ = new_str;
         }
-        |
+        | 
         CADENA
         ;
 expre:  '(' expre ')'

@@ -49,7 +49,13 @@ GREATEREQUAL ">="
                 return;
               }
 {CADENA}      {
-
+                int size = strlen(yytext);
+                char value_s[size];
+                int i = 0;
+                for (char *iter = yytext; *iter != '\0'; iter++) {
+                  value_s[i] = *iter;
+                  i++;
+                }
                 yylval.s = yytext;
                 return(CADENA);
               }

@@ -22,7 +22,14 @@ linked_list lista;
 %token <a> CONDICION /*Lo que recibe del lexer*/ 
 %token <a> ALFABETO
 %token <i> ENTERO 
-%token <f> FLOTANTE 
+%token <f> FLOTANTE
+%token <s> COMENTARIO
+%token <s> ESPACIOS
+
+%token <i> EQUAL
+%token <i> NOTEQUAL
+%token <i> LESSEQUAL
+%token <i> GREATEREQUAL
 
 %left '?'
 %left '+' '-'
@@ -57,6 +64,8 @@ stat:    expr
           printf("exprf: %f\n", $1);
          }
          |
+         if_stat
+         |
          racha '?'
          {
           create_list(&lista);
@@ -79,6 +88,53 @@ stat:    expr
           }
          }
          ;
+
+if_stat: IF '(' condition ')' stat
+         {
+         if ($3){
+            $5
+          }
+         }
+         |
+         IF '(' condition ')' stat ELSE stat
+         {
+         if ($3){
+            $5
+          }else{
+            $7
+          }
+         }
+         ;
+condition: expr EQUAL expr
+           {
+             $$ = $1 == $3;
+           }
+           |
+           expr NOTEQUAL expr
+           {
+             $$ = $1 != $3;
+           }
+           |
+           expr LESSEQUAL expr
+           {
+             $$ = $1 <= $3;
+           }
+           |
+           expr GREATEREQUAL expr
+           {
+             $$ = $1 >= $3;
+           }
+           |
+           expr '<' expr
+           {
+             $$ = $1 < $3;
+           }
+           |
+           expr '>' expr
+           {
+             $$ = $1 > $3;
+           }
+           ; 
 
 expr:   expr '*' expr 
         {

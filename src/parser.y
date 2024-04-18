@@ -66,21 +66,8 @@ stat:    expr
          |
          if_stat
          |
-         racha '?'
+         racha
          {
-          create_list(&lista);
-          caracter = $1[0];
-          PushBack(&lista, caracter);
-          PushBack(&lista, 0);
-          for (char *iter = $1; *iter != '\0'; iter++){
-            if(*iter == caracter){
-              lista.tail->dato +=1;
-            }else{
-              caracter = *iter;
-              PushBack(&lista, caracter);
-              PushBack(&lista, 1);
-            }
-          }
           while (lista.head != NULL){
             int c = PopFront(&lista);
             int d = PopFront(&lista);
@@ -212,10 +199,22 @@ exprf:  '(' exprf ')'
         |
         FLOTANTE
         ;
-racha:  CADENA{
-  printf("cadena: %s\n", $1);
-  $$ = $1;
-}
+racha:  CADENA '?'
+        {
+          create_list(&lista);
+          caracter = $1[0];
+          PushBack(&lista, caracter);
+          PushBack(&lista, 0);
+          for (char *iter = $1; *iter != '\0'; iter++){
+            if(*iter == caracter){
+              lista.tail->dato +=1;
+            }else{
+              caracter = *iter;
+              PushBack(&lista, caracter);
+              PushBack(&lista, 1);
+            }
+          }
+        }
         ;
 
 %%

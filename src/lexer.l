@@ -6,23 +6,23 @@ char *string;
 %}
 /*Las cadenas deberian ser en minuscula y en mayuscula el alfabeto*/
 MINUSCULAS [a-z]
-ALFABETO [A-Z]
-ESPACIOS [\t|" "]*
-DIGITO [0-9]
-ENTERO {DIGITO}+
-FLOTANTE {DIGITO}+"."{DIGITO}+
-CADENA {MINUSCULAS}+
+ALFABETO   [A-Z]
+ESPACIOS   [\t|" "]*
+DIGITO     [0-9]
+ENTERO     {DIGITO}+
+FLOTANTE   {DIGITO}+"."{DIGITO}+
+CADENA     {MINUSCULAS}+
 COMENTARIO ["//".*]
 
 IF      if
-ELSE else
-FOR for
-WHILE while
-SHOW SHOW
+ELSE    else
+FOR     for
+WHILE   while
+SHOW    SHOW
 
-EQUAL "=="
-NOTEQUAL "!="
-LESSEQUAL "<="
+EQUAL        "=="
+NOTEQUAL     "!="
+LESSEQUAL    "<="
 GREATEREQUAL ">="
 
 /**/
@@ -49,6 +49,7 @@ GREATEREQUAL ">="
                 return;
               }
 {CADENA}      {
+
                 yylval.s = yytext;
                 return(CADENA);
               }

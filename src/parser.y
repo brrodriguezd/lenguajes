@@ -132,7 +132,6 @@ expre:  '(' expre ')'
         }
         |
         ENTERO
-        |
         ;
 if_expre: IF '(' condition ')' '{' expre '}'
          {

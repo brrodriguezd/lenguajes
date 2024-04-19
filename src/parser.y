@@ -13,39 +13,34 @@ linked_list lista;
 
 %start list
 
-%union { int a; char* s; int i; float f;} /*Definición de tipos*/
+%code requires {
+  #include "./lib/expr.h"
+}
+
+%union { int a; char* s; int i; float f; expr e;} /*Definición de tipos*/
 
 
 %token <s> CADENA
-%token <a> ASIGNACION
-%token <a> EXPRESION
-%token <a> CONDICION /*Lo que recibe del lexer*/ 
 %token <a> ALFABETO
 %token <i> ENTERO 
 %token <f> FLOTANTE
-%token <s> ESPACIOS
 
 %token IF
 %token ELSE
 %token FOR
 %token WHILE
-%token COMENTARIO
 
-%token EQUAL
-%token NOTEQUAL
-%token LESSEQUAL
-%token GREATEREQUAL
+%token EQ
+%token NE
+%token LE
+%token GE
 
 %left '?'
 %left '+' '-'
 %left '*' '/' '%'
 
 %type<s> racha
-%type<s> expr
-%type<i> expre
-%type<i> if_expre
-%type<f> exprf
-%type<i> condition
+%type<e> expr
 %%                   /* beginning of rules section */
 
 list:                       /*empty */
@@ -59,20 +54,15 @@ list:                       /*empty */
          ;
 stat:    expr 
          {
-          printf("expr: %s\n", $1);
-         }
-         |
-         expre{
-          printf("expre: %d\n", $1);
-         }
-         |
-         exprf 
-         {
-          printf("exprf: %f\n", $1);
-         }
-         |
-         if_expre{
-          printf("if_expre: %d\n", $1);
+          if($1.tipo == 1){
+            int *ptr = $1.ptr;
+            printf("expr: %d\n", *ptr);
+          }else if($1.tipo == 1){
+            float *ptr = $1.ptr;
+            printf("expr: %f\n", *ptr);
+          }else if($1.tipo == 3){
+            printf("expr: %s\n", $1);
+          }
          }
          |
          racha
@@ -86,150 +76,51 @@ stat:    expr
          ;
 expr:   expr '*' expr 
         {
-          int size = strlen($1) + strlen($3);
-          printf("s1: %s, s2: %s\n", $1, $3);
-          printf("size: %d\n", size);
-          char *new_str = malloc(size*sizeof(char));
-          int i = 0;
-          for (char *iter = $1; *iter != '\0'; iter++) {
-            printf("char %d: %c\n", i, *iter);
-            new_str[i] = *iter;
-            i++;
+          expr new_expr;
+          if ($1.tipo == 3 && $3.tipo == 3){
+            char *expr1 = $1.ptr;
+            char *expr2 = $3.ptr;
+            int size = strlen(expr1) + strlen(expr2);
+            printf("size: %d\n", size);
+            char *new_str = malloc(size*sizeof(char));
+            int i = 0;
+            for (char *iter = expr1; *iter != '\0'; iter++) {
+              printf("char %d: %c\n", i, *iter);
+              new_str[i] = *iter;
+              i++;
+            }
+            for (char *iter = expr2; *iter != '\0'; iter++) {
+              printf("char %d: %c\n", i, *iter);
+              new_str[i] = *iter;
+              i++;
+            }
+            create_string(&new_expr, new_str);
+            $$ = new_expr;
+          }else if ($1.tipo == 1 && $3.tipo == 1){
+            int *expr1 = $1.ptr;
+            int *expr2 = $3.ptr;
+            printf("%d, %d\n", *expr1, *expr2);
+            int *new_int = malloc(sizeof(int));
+            *new_int = (*expr1) * (*expr2);
+            printf("%d", *new_int);
+            create_int(&new_expr, new_int);
+            $$ = new_expr;
           }
-          for (char *iter = $3; *iter != '\0'; iter++) {
-            printf("char %d: %c\n", i, *iter);
-            new_str[i] = *iter;
-            i++;
-          }
-          $$ = new_str;
         }
         | 
-        CADENA
-        ;
-expre:  '(' expre ')'
-        {
-          $$ = $2;
+        CADENA {
+          expr new_expr;
+          create_string(&new_expr, $1);
+          $$ = new_expr;
         }
         |
-        expre '*' expre 
-        {
-          $$ = $1 * $3;
+        ENTERO {
+          expr new_expr;
+          int *new_int = malloc(sizeof(int));
+          *new_int = $1;
+          create_int(&new_expr, new_int);
+          $$ = new_expr;
         }
-        |
-        expre '/' expre 
-        {
-          $$ = $1 / $3;
-        }
-        |
-        expre '+' expre 
-        {
-          $$ = $1 + $3;
-        }
-        |
-        expre '-' expre 
-        {
-          $$ = $1 - $3;
-        }
-        |
-        ENTERO
-        ;
-if_expre: IF '(' condition ')' '{' expre '}'
-         {
-          if ($3 == 1){
-            $$ = $6;
-          }
-         }
-         |
-         IF '(' condition ')' '{' expre '}' ELSE '{' expre '}'
-         {
-         if ($3 == 1){
-            $$ = $6;
-          }else{
-            $$ = $10;
-          }
-         }
-         ;
-condition: expre EQUAL expre
-           {
-             if ($1 == $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           |
-           expr NOTEQUAL expr
-           {
-             if ($1 != $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           |
-           expr LESSEQUAL expr
-           {
-             if ($1 <= $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           |
-           expr GREATEREQUAL expr
-           {
-             if ($1 >= $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           |
-           expr '<' expr
-           {
-             if ($1 < $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           |
-           expr '>' expr
-           {
-             if ($1 > $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           ; 
-
-exprf:  '(' exprf ')'
-        {
-          $$ = $2;
-        }
-        |
-        exprf '*' exprf 
-        {
-          $$ = $1 * $3;
-        }
-        |
-        exprf '/' exprf 
-        {
-          $$ = $1 / $3;
-        }
-        |
-        exprf '+' exprf 
-        {
-          $$ = $1 + $3;
-        }
-        |
-        exprf '-' exprf 
-        {
-          $$ = $1 - $3;
-        }
-        |
-        FLOTANTE
         ;
 racha:  CADENA '?'
         {
@@ -250,6 +141,21 @@ racha:  CADENA '?'
         ;
 
 %%
+
+void create_int(expr *expresion, void *ptr) {
+  expresion->ptr = ptr;
+  expresion->tipo = 1;
+}
+
+void create_float(expr *expresion, void *ptr) {
+  expresion->ptr = ptr;
+  expresion->tipo = 2;
+}
+
+void create_string(expr *expresion, void *ptr) {
+  expresion->ptr = ptr;
+  expresion->tipo = 3;
+}
 int main()
 {
   return(yyparse());

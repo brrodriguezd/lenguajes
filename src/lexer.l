@@ -5,14 +5,14 @@ int c;
 char *string;
 %}
 /*Las cadenas deberian ser en minuscula y en mayuscula el alfabeto*/
+COMENTARIO "//".*
 MINUSCULAS [a-z]
 ALFABETO   [A-Z]
 ESPACIOS   [\t|" "]*
 DIGITO     [0-9]
 ENTERO     {DIGITO}+
 FLOTANTE   {DIGITO}+"."{DIGITO}+
-CADENA     {MINUSCULAS}+
-COMENTARIO ["//".*]
+CADENA     \"{MINUSCULAS}+\"
 /**/
 %%
 {FLOTANTE}    {
@@ -31,13 +31,12 @@ COMENTARIO ["//".*]
                 yylval.a = A;
                 return (ALFABETO);
               }
-
-{COMENTARIO}  { return (COMENTARIO); }
+{COMENTARIO}  ;
 {CADENA}      {
                 int size = strlen(yytext);
                 char *value_s = malloc(size*sizeof(char));
                 int i = 0;
-                for (char *iter = yytext; *iter != '\0'; iter++) {
+                for (char *iter = yytext+1; *iter != '"'; iter++) {
                   value_s[i] = *iter;
                   i++;
                 }
@@ -50,10 +49,10 @@ ELSE          { return(ELSE); }
 FOR           { return(FOR); }
 WHILE         { return(WHILE); }
 
-"=="          { return(EQUAL); }
-"!="          { return(NOTEQUAL); }
-"<="          { return(LESSEQUAL); }
-">="          { return(GREATEREQUAL); }
+"=="          { return(EQ); }
+"!="          { return(NE); }
+"<="          { return(LE); }
+">="          { return(GE); }
 
 [^a-z0-9\b]   {
                 c = yytext[0];

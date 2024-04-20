@@ -57,7 +57,7 @@ stat:    expr
           if($1.tipo == 1){
             int *ptr = $1.ptr;
             printf("expr: %d\n", *ptr);
-          }else if($1.tipo == 1){
+          }else if($1.tipo == 2){
             float *ptr = $1.ptr;
             printf("expr: %f\n", *ptr);
           }else if($1.tipo == 3){
@@ -139,6 +139,144 @@ racha:  CADENA '?'
           }
         }
         ;
+if_expr: IF '(' condition ')' '{' expr '}'
+         {
+          if ($3 == 1){
+            $$ = $6;
+          }
+         }
+         |
+         IF '(' condition ')' '{' expr '}' ELSE '{' expr '}'
+         {
+         if ($3 == 1){
+            $$ = $6;
+          }else{
+            $$ = $10;
+          }
+         }
+         
+condition: expr EQ expr
+           {
+             if ($1.tipo == 1 && $3.tipo == 1) {
+               if ($1 == $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+             else if ($1.tipo == 2 && $3.tipo == 2) {
+               if ($1 == $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+             else if ($1.tipo == 3 && $3.tipo == 3) {
+               if (strcmp($1, $3) == 0){
+                 $$ = 1
+               } else {
+                 $$ = 0;
+               }
+             }
+           }
+           |
+           expr NE expr
+           {
+             if ($1.tipo == 1 && $3.tipo == 1) {
+               if ($1 != $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+             else if ($1.tipo == 2 && $3.tipo == 2) {
+               if ($1 != $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+             else if ($1.tipo == 3 && $3.tipo == 3) {
+               if (strcmp($1, $3) != 0){
+                 $$ = 1
+               } else {
+                 $$ = 0;
+               }
+             }
+           }
+           |
+           expr LE expr
+            {
+             if ($1.tipo == 1 && $3.tipo == 1) {
+               if ($1 <= $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+             else if ($1.tipo == 2 && $3.tipo == 2) {
+               if ($1 <= $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+           }
+           |
+           expr GE expr
+           {
+             if ($1.tipo == 1 && $3.tipo == 1) {
+               if ($1 >= $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+             else if ($1.tipo == 2 && $3.tipo == 2) {
+               if ($1 >= $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+           }
+           |
+           expr '<' expr
+           {
+             if ($1.tipo == 1 && $3.tipo == 1) {
+               if ($1 < $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+             else if ($1.tipo == 2 && $3.tipo == 2) {
+               if ($1 < $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+           }
+           |
+           expr '>' expr
+           {
+             if ($1.tipo == 1 && $3.tipo == 1) {
+               if ($1 > $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+             else if ($1.tipo == 2 && $3.tipo == 2) {
+               if ($1 > $3){
+                 $$ = 1;
+               } else {
+                 $$ = 0;
+               }
+             } 
+           }
+           ; 
 
 %%
 

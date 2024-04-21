@@ -139,6 +139,22 @@ racha:  CADENA '?'
           }
         }
         ;
+for_expr: FOR '(' expr ';' condition ';' expr ')' '{' expr '}'
+         {
+          $3;
+          while ($5) {
+            $$ = $10;
+            $7;
+          }
+         }
+         ;
+while_expr: WHILE '(' condition ')' '{' expr '}'
+           {
+            while ($3){
+              $$ = $6;
+            }
+           }
+           ;
 if_expr: IF '(' condition ')' '{' expr '}'
          {
           if ($3 == 1){

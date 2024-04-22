@@ -85,16 +85,13 @@ expr:   expr '*' expr
             char *expr1 = $1.ptr;
             char *expr2 = $3.ptr;
             int size = strlen(expr1) + strlen(expr2);
-            printf("size: %d\n", size);
             char *new_str = malloc(size*sizeof(char));
             int i = 0;
             for (char *iter = expr1; *iter != '\0'; iter++) {
-              printf("char %d: %c\n", i, *iter);
               new_str[i] = *iter;
               i++;
             }
             for (char *iter = expr2; *iter != '\0'; iter++) {
-              printf("char %d: %c\n", i, *iter);
               new_str[i] = *iter;
               i++;
             }
@@ -103,11 +100,33 @@ expr:   expr '*' expr
           }else if ($1.tipo == 1 && $3.tipo == 1){
             int *expr1 = $1.ptr;
             int *expr2 = $3.ptr;
-            printf("%d, %d\n", *expr1, *expr2);
             int *new_int = malloc(sizeof(int));
             *new_int = (*expr1) * (*expr2);
-            printf("%d", *new_int);
             create_int(&new_expr, new_int);
+            $$ = new_expr;
+          }
+          else if ($1.tipo == 2 && $3.tipo == 1){
+            float *expr1 = $1.ptr;
+            int *expr2 = $3.ptr;
+            float *new_float = malloc(sizeof(float));
+            *new_float = (*expr1) * (*expr2);
+            create_float(&new_expr, new_float);
+            $$ = new_expr;
+          }
+          else if ($1.tipo == 1 && $3.tipo == 2){
+            int *expr1 = $1.ptr;
+            float *expr2 = $3.ptr;
+            float *new_float = malloc(sizeof(float));
+            *new_float = (*expr1) * (*expr2);
+            create_float(&new_expr, new_float);
+            $$ = new_expr;
+          }
+          else if ($1.tipo == 2 && $3.tipo == 2){
+            float *expr1 = $1.ptr;
+            float *expr2 = $3.ptr;
+            float *new_float = malloc(sizeof(float));
+            *new_float = (*expr1) * (*expr2);
+            create_float(&new_expr, new_float);
             $$ = new_expr;
           }
         }
@@ -125,7 +144,32 @@ expr:   expr '*' expr
                 int *new_int = malloc(sizeof(int));
                 *new_int = (*expr1) / (*expr2);
                 create_int(&new_expr, new_int);
-            } else if ($1.tipo == 2 && $3.tipo == 2) {
+            }
+            else if ($1.tipo == 2 && $3.tipo == 1){
+              float *expr1 = $1.ptr;
+              int *expr2 = $3.ptr;
+              if (*expr2 == 0) {
+                  printf("Error: división por cero\n");
+                  exit(1);
+              }
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) / (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 1 && $3.tipo == 2){
+              int *expr1 = $1.ptr;
+              float *expr2 = $3.ptr;
+              if (*expr2 == 0) {
+                  printf("Error: división por cero\n");
+                  exit(1);
+              }
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) / (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 2 && $3.tipo == 2) {
                 float *expr1 = $1.ptr;
                 float *expr2 = $3.ptr;
                 if (*expr2 == 0.0) {
@@ -151,7 +195,24 @@ expr:   expr '*' expr
                 int *new_int = malloc(sizeof(int));
                 *new_int = (*expr1) + (*expr2);
                 create_int(&new_expr, new_int);
-            } else if ($1.tipo == 2 && $3.tipo == 2) {
+            }
+            else if ($1.tipo == 2 && $3.tipo == 1){
+              float *expr1 = $1.ptr;
+              int *expr2 = $3.ptr;
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) + (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 1 && $3.tipo == 2){
+              int *expr1 = $1.ptr;
+              float *expr2 = $3.ptr;
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) + (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 2 && $3.tipo == 2) {
                 float *expr1 = $1.ptr;
                 float *expr2 = $3.ptr;
                 float *new_float = malloc(sizeof(float));
@@ -181,7 +242,24 @@ expr:   expr '*' expr
                 int *new_int = malloc(sizeof(int));
                 *new_int = (*expr1) - (*expr2);
                 create_int(&new_expr, new_int);
-            } else if ($1.tipo == 2 && $3.tipo == 2) {
+            }
+            else if ($1.tipo == 2 && $3.tipo == 1){
+              float *expr1 = $1.ptr;
+              int *expr2 = $3.ptr;
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) - (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 1 && $3.tipo == 2){
+              int *expr1 = $1.ptr;
+              float *expr2 = $3.ptr;
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) - (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 2 && $3.tipo == 2) {
                 float *expr1 = $1.ptr;
                 float *expr2 = $3.ptr;
                 float *new_float = malloc(sizeof(float));
@@ -205,6 +283,14 @@ expr:   expr '*' expr
           int *new_int = malloc(sizeof(int));
           *new_int = $1;
           create_int(&new_expr, new_int);
+          $$ = new_expr;
+        }
+        |
+        FLOTANTE {
+          expr new_expr;
+          float *new_float = malloc(sizeof(float));
+          *new_float = $1;
+          create_float(&new_expr, new_float);
           $$ = new_expr;
         }
         |

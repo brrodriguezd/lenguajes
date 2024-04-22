@@ -349,100 +349,176 @@ if_expr: IF '(' condition ')' '{' expr '}'
           }
          }
          
-condition: expr EQ expr
-           {
-             int result;
-             if ($1.tipo == 1 && $3.tipo == 1) {
-               result = ($1.ptr == $3.ptr) ? 1 : 0;
-             } else if ($1.tipo == 2 && $3.tipo == 2) {
-               result = ($1.ptr == $3.ptr) ? 1 : 0;
-             } else if ($1.tipo == 3 && $3.tipo == 3) {
-               result = (strcmp($1.ptr, $3.ptr) == 0) ? 1 : 0;
-             }
-             $$ = result;
-           }
-           |
-           expr NE expr
-           {
-             int result;
-             if ($1.tipo == 1 && $3.tipo == 1) {
-               result = ($1.ptr != $3.ptr) ? 1 : 0;
-             } else if ($1.tipo == 2 && $3.tipo == 2) {
-               result = ($1.ptr != $3.ptr) ? 1 : 0;
-             } else if ($1.tipo == 3 && $3.tipo == 3) {
-               result = (strcmp($1.ptr, $3.ptr) != 0) ? 1 : 0;
-             }
-             $$ = result;
-           }
-           |
-           expr LE expr
-           {
-            if ($1.tipo == 1 && $3.tipo == 1) {
-                int value1 = *((int*)$1.ptr);  
-                int value2 = *((int*)$3.ptr);  
-                $$ = (value1 <= value2) ? 1 : 0;
-            } else if ($1.tipo == 2 && $3.tipo == 2) {
-                float value1 = *((float*)$1.ptr);  
-                float value2 = *((float*)$3.ptr);  
-                $$ = (value1 <= value2) ? 1 : 0;
-            } else {
-                // Manejo de error si los tipos no son compatibles o no están definidos
-                fprintf(stderr, "Tipos de datos incompatibles para la comparación <=\n");
-                exit(EXIT_FAILURE);
+condition:  expr EQ expr
+            {
+              int result;
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  result = (*((int*)$1.ptr) == *((int*)$3.ptr)) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  result = (*((int*)$1.ptr) == *((float*)$3.ptr)) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  result = (*((float*)$1.ptr) == *((int*)$3.ptr)) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  result = (*((float)$1.ptr) == *((float*)$3.ptr)) ? 1 : 0;
+                }
+              }else if ($1.tipo == 3 && $3.tipo == 3) {
+                result = (strcmp($1.ptr, $3.ptr) == 0) ? 1 : 0;
+              }
+              $$ = result;
             }
-           }
-           |
-           expr GE expr
-           {
-            if ($1.tipo == 1 && $3.tipo == 1) {
-                int value1 = *((int*)$1.ptr);  
-                int value2 = *((int*)$3.ptr);  
-                $$ = (value1 >= value2) ? 1 : 0;
-            } else if ($1.tipo == 2 && $3.tipo == 2) {
-                float value1 = *((float*)$1.ptr);  
-                float value2 = *((float*)$3.ptr);  
-                $$ = (value1 >= value2) ? 1 : 0;
-            } else {
-                // Manejo de error si los tipos no son compatibles o no están definidos
-                fprintf(stderr, "Tipos de datos incompatibles para la comparación >=\n");
-                exit(EXIT_FAILURE);
+            |
+            expr NE expr
+            {
+              int result;
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  result = (*((int*)$1.ptr) != *((int*)$3.ptr)) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  result = (*((int*)$1.ptr) != *((float*)$3.ptr)) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  result = (*((float*)$1.ptr) != *((int*)$3.ptr)) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  result = (*((float)$1.ptr) != *((float*)$3.ptr)) ? 1 : 0;
+                }
+              } else if ($1.tipo == 3 && $3.tipo == 3) {
+                result = (strcmp($1.ptr, $3.ptr) != 0) ? 1 : 0;
+              }
+              $$ = result;
             }
-           }
-           |
-           expr '<' expr
-           {
-            if ($1.tipo == 1 && $3.tipo == 1) {
-                int value1 = *((int*)$1.ptr);  
-                int value2 = *((int*)$3.ptr);  
-                $$ = (value1 < value2) ? 1 : 0;
-            } else if ($1.tipo == 2 && $3.tipo == 2) {
-                float value1 = *((float*)$1.ptr);  
-                float value2 = *((float*)$3.ptr);  
-                $$ = (value1 < value2) ? 1 : 0;
-            } else {
-                // Manejo de error si los tipos no son compatibles o no están definidos
+            |
+            expr LE expr
+            {
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  int value1 = *((int*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 <= value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  int value1 = *((int*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 <= value2) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  float value1 = *((float*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 <= value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  float value1 = *((float*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 <= value2) ? 1 : 0;
+                }
+              } else {
+                  // Manejo de error si los tipos no son compatibles o no están definidos
+                  fprintf(stderr, "Tipos de datos incompatibles para la comparación <=\n");
+                  exit(EXIT_FAILURE);
+              }
+            }
+            |
+            expr GE expr
+            {
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  int value1 = *((int*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 >= value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  int value1 = *((int*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 >= value2) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  float value1 = *((float*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 >= value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  float value1 = *((float*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 >= value2) ? 1 : 0;
+                }
+              } else {
+                  // Manejo de error si los tipos no son compatibles o no están definidos
+                  fprintf(stderr, "Tipos de datos incompatibles para la comparación <=\n");
+                  exit(EXIT_FAILURE);
+              }
+            }
+            |
+            expr '<' expr
+            {
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  int value1 = *((int*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 < value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  int value1 = *((int*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 < value2) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  float value1 = *((float*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 < value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  float value1 = *((float*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 < value2) ? 1 : 0;
+                }
+              } else {
+                  // Manejo de error si los tipos no son compatibles o no están definidos
                 fprintf(stderr, "Tipos de datos incompatibles para la comparación <\n");
                 exit(EXIT_FAILURE);
+              }
             }
-           }
-           |
-           expr '>' expr
-           {
-            if ($1.tipo == 1 && $3.tipo == 1) {
-                int value1 = *((int*)$1.ptr);  
-                int value2 = *((int*)$3.ptr);  
-                $$ = (value1 > value2) ? 1 : 0;
-            } else if ($1.tipo == 2 && $3.tipo == 2) {
-                float value1 = *((float*)$1.ptr);  
-                float value2 = *((float*)$3.ptr);  
-                $$ = (value1 > value2) ? 1 : 0;
-            } else {
-                // Manejo de error si los tipos no son compatibles o no están definidos
+            |
+            expr '>' expr
+            {
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  int value1 = *((int*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 > value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  int value1 = *((int*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 > value2) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  float value1 = *((float*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 > value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  float value1 = *((float*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 > value2) ? 1 : 0;
+                }
+              } else {
+                  // Manejo de error si los tipos no son compatibles o no están definidos
                 fprintf(stderr, "Tipos de datos incompatibles para la comparación >\n");
                 exit(EXIT_FAILURE);
+              }
             }
-           }
-           ; 
+            ; 
 
 %%
 

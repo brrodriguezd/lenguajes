@@ -111,7 +111,89 @@ expr:   expr '*' expr
             $$ = new_expr;
           }
         }
-        | 
+        |
+        expr '/' expr 
+        {
+            expr new_expr;
+            if ($1.tipo == 1 && $3.tipo == 1) {
+                int *expr1 = $1.ptr;
+                int *expr2 = $3.ptr;
+                if (*expr2 == 0) {
+                    printf("Error: división por cero\n");
+                    exit(1);
+                }
+                int *new_int = malloc(sizeof(int));
+                *new_int = (*expr1) / (*expr2);
+                create_int(&new_expr, new_int);
+            } else if ($1.tipo == 2 && $3.tipo == 2) {
+                float *expr1 = $1.ptr;
+                float *expr2 = $3.ptr;
+                if (*expr2 == 0.0) {
+                    printf("Error: división por cero\n");
+                    exit(1);
+                }
+                float *new_float = malloc(sizeof(float));
+                *new_float = (*expr1) / (*expr2);
+                create_float(&new_expr, new_float);
+            } else {
+                printf("Error: Tipos de operandos no válidos para la división\n");
+                exit(1);
+            }
+            $$ = new_expr;
+        }
+        |
+        expr '+' expr 
+        {
+            expr new_expr;
+            if ($1.tipo == 1 && $3.tipo == 1) {
+                int *expr1 = $1.ptr;
+                int *expr2 = $3.ptr;
+                int *new_int = malloc(sizeof(int));
+                *new_int = (*expr1) + (*expr2);
+                create_int(&new_expr, new_int);
+            } else if ($1.tipo == 2 && $3.tipo == 2) {
+                float *expr1 = $1.ptr;
+                float *expr2 = $3.ptr;
+                float *new_float = malloc(sizeof(float));
+                *new_float = (*expr1) + (*expr2);
+                create_float(&new_expr, new_float);
+            } else if ($1.tipo == 3 && $3.tipo == 3) {
+                char *expr1 = $1.ptr;
+                char *expr2 = $3.ptr;
+                int size = strlen(expr1) + strlen(expr2) + 1; 
+                char *new_str = malloc(size * sizeof(char));
+                strcpy(new_str, expr1);
+                strcat(new_str, expr2);
+                create_string(&new_expr, new_str);
+            } else {
+                printf("Error: Tipos de operandos no válidos para la suma\n");
+                exit(1);
+            }
+            $$ = new_expr;
+        }
+        |
+        expr '-' expr 
+        {
+            expr new_expr;
+            if ($1.tipo == 1 && $3.tipo == 1) {
+                int *expr1 = $1.ptr;
+                int *expr2 = $3.ptr;
+                int *new_int = malloc(sizeof(int));
+                *new_int = (*expr1) - (*expr2);
+                create_int(&new_expr, new_int);
+            } else if ($1.tipo == 2 && $3.tipo == 2) {
+                float *expr1 = $1.ptr;
+                float *expr2 = $3.ptr;
+                float *new_float = malloc(sizeof(float));
+                *new_float = (*expr1) - (*expr2);
+                create_float(&new_expr, new_float);
+            } else {
+                printf("Error: Tipos de operandos no válidos para la resta\n");
+                exit(1);
+            }
+            $$ = new_expr;
+        }
+        |
         CADENA {
           expr new_expr;
           create_string(&new_expr, $1);

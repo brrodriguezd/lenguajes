@@ -3,6 +3,7 @@
 #include <string.h>
 #include "./lib/linked_list.c"
 #include "./lib/expr.h"
+#include "./lib/diccionario.c"
 
 int yylex(void);
 int yyerror(char* s);
@@ -26,6 +27,8 @@ linked_list lista;
 %token <a> ALFABETO
 %token <i> ENTERO 
 %token <f> FLOTANTE
+%token <s> NOMBRE
+%token <i> TIPO
 
 %token IF
 %token ELSE
@@ -79,7 +82,13 @@ stat:    expr
             printf("%c: %d\n", c, d);
           }
          }
-         ;
+         |
+         NOMBRE TIPO '=' expr
+         {
+           if($4.tipo == $2){
+             insert($1, $4);
+           }
+         };
 expr:   '(' expr ')'
         {
           expr new_expr = $2;
@@ -300,6 +309,10 @@ expr:   '(' expr ')'
           *new_float = $1;
           create_float(&new_expr, new_float);
           $$ = new_expr;
+        }
+        |
+        NOMBRE {
+          $$ = get($1);
         }
         |
         for_expr

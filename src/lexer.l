@@ -13,8 +13,22 @@ DIGITO     [0-9]
 ENTERO     {DIGITO}+
 FLOTANTE   {DIGITO}+"."{DIGITO}+
 CADENA     \"{MINUSCULAS}+\"
+NOMBRE     {MINUSCULAS}+
 /**/
 %%
+\:int           { 
+                yylval.i = 1;
+                return(TIPO); 
+              }
+\:string        { 
+                yylval.i = 3;
+                return(TIPO); 
+              }
+\:float         { 
+                yylval.i = 2;
+                return(TIPO);
+              }
+
 {FLOTANTE}    {
                 float value_f = atof(yytext);
                 yylval.f = value_f;
@@ -42,6 +56,17 @@ CADENA     \"{MINUSCULAS}+\"
                 }
                 yylval.s = value_s;
                 return(CADENA);
+              }
+{NOMBRE}      {
+                int size = strlen(yytext);
+                char *value_s = malloc(size*sizeof(char));
+                int i = 0;
+                for (char *iter = yytext; *iter != '\0'; iter++) {
+                  value_s[i] = *iter;
+                  i++;
+                }
+                yylval.s = value_s;
+                return(NOMBRE);
               }
 
 IF            { return(IF); }

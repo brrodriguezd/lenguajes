@@ -1,11 +1,11 @@
-#include <stdio.h>
+#include "expr.h"
 #include <string.h>
 
 #define MAX_SIZE 100 // Maximum number of elements in the map
 
 int size = 0;             // Current number of elements in the map
 char keys[MAX_SIZE][100]; // Array to store the keys
-int values[MAX_SIZE];     // Array to store the values
+expr values[MAX_SIZE];    // Array to store the values
 
 // Function to get the index of a key in the keys array
 int getIndex(char key[]) {
@@ -18,7 +18,7 @@ int getIndex(char key[]) {
 }
 
 // Function to insert a key-value pair into the map
-void insert(char key[], int value) {
+void insert(char key[], expr value) {
   int index = getIndex(key);
   if (index == -1) { // Key not found
     strcpy(keys[size], key);
@@ -30,18 +30,12 @@ void insert(char key[], int value) {
 }
 
 // Function to get the value of a key in the map
-int get(char key[]) {
+expr get(char key[]) {
   int index = getIndex(key);
   if (index == -1) { // Key not found
-    return -1;
+    expr new_expr;
+    return new_expr;
   } else { // Key found
     return values[index];
-  }
-}
-
-// Function to print the map
-void printMap() {
-  for (int i = 0; i < size; i++) {
-    printf("%s: %d\n", keys[i], values[i]);
   }
 }

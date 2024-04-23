@@ -4,5 +4,5 @@ bison -d parser.y
 echo corriendo lex...
 flex lexer.l
 echo compilando...
-cc parser.tab.c lex.yy.c -o programa
+cc parser.tab.c lex.yy.c lib/expr.c -o programa
 ./programa

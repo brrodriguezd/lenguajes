@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 #include "./lib/linked_list.c"
+#include "./lib/expr.h"
 
 int yylex(void);
 int yyerror(char* s);
 int regs[26] = {0}; //26 del alfabeto
+expr variables [200];
 char* str;
 int caracter;
 linked_list lista;
@@ -78,7 +80,13 @@ stat:    expr
           }
          }
          ;
-expr:   expr '*' expr 
+expr:   '(' expr ')'
+        {
+          expr new_expr = $2;
+          $$ = new_expr;
+        }
+        |
+        expr '*' expr 
         {
           expr new_expr;
           if ($1.tipo == 3 && $3.tipo == 3){
@@ -364,7 +372,7 @@ condition:  expr EQ expr
                   result = (*((float*)$1.ptr) == *((int*)$3.ptr)) ? 1 : 0;
                 }
                 else if($3.tipo == 2){
-                  result = (*((float)$1.ptr) == *((float*)$3.ptr)) ? 1 : 0;
+                  result = (*((float*)$1.ptr) == *((float*)$3.ptr)) ? 1 : 0;
                 }
               }else if ($1.tipo == 3 && $3.tipo == 3) {
                 result = (strcmp($1.ptr, $3.ptr) == 0) ? 1 : 0;
@@ -387,7 +395,7 @@ condition:  expr EQ expr
                   result = (*((float*)$1.ptr) != *((int*)$3.ptr)) ? 1 : 0;
                 }
                 else if($3.tipo == 2){
-                  result = (*((float)$1.ptr) != *((float*)$3.ptr)) ? 1 : 0;
+                  result = (*((float*)$1.ptr) != *((float*)$3.ptr)) ? 1 : 0;
                 }
               } else if ($1.tipo == 3 && $3.tipo == 3) {
                 result = (strcmp($1.ptr, $3.ptr) != 0) ? 1 : 0;
@@ -521,21 +529,6 @@ condition:  expr EQ expr
             ; 
 
 %%
-
-void create_int(expr *expresion, void *ptr) {
-  expresion->ptr = ptr;
-  expresion->tipo = 1;
-}
-
-void create_float(expr *expresion, void *ptr) {
-  expresion->ptr = ptr;
-  expresion->tipo = 2;
-}
-
-void create_string(expr *expresion, void *ptr) {
-  expresion->ptr = ptr;
-  expresion->tipo = 3;
-}
 int main()
 {
   return(yyparse());

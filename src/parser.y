@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 #include "./lib/linked_list.c"
+#include "./lib/expr.h"
+#include "./lib/diccionario.c"
 
 int yylex(void);
 int yyerror(char* s);
 int regs[26] = {0}; //26 del alfabeto
+expr variables [200];
 char* str;
 int caracter;
 linked_list lista;
@@ -13,38 +16,39 @@ linked_list lista;
 
 %start list
 
-%union { int a; char* s; int i; float f;} /*Definición de tipos*/
+%code requires {
+  #include "./lib/expr.h"
+}
+
+%union { int a; char* s; int i; float f; expr e;} /*Definición de tipos*/
 
 
 %token <s> CADENA
-%token <a> ASIGNACION
-%token <a> EXPRESION
-%token <a> CONDICION /*Lo que recibe del lexer*/ 
 %token <a> ALFABETO
 %token <i> ENTERO 
 %token <f> FLOTANTE
-%token <s> ESPACIOS
+%token <s> NOMBRE
+%token <i> TIPO
 
 %token IF
 %token ELSE
 %token FOR
 %token WHILE
-%token COMENTARIO
 
-%token EQUAL
-%token NOTEQUAL
-%token LESSEQUAL
-%token GREATEREQUAL
+%token EQ
+%token NE
+%token LE
+%token GE
 
 %left '?'
 %left '+' '-'
 %left '*' '/' '%'
 
 %type<s> racha
-%type<s> expr
-%type<i> expre
-%type<i> if_expre
-%type<f> exprf
+%type<e> expr
+%type<e> for_expr
+%type<e> while_expr
+%type<e> if_expr
 %type<i> condition
 %%                   /* beginning of rules section */
 
@@ -59,20 +63,15 @@ list:                       /*empty */
          ;
 stat:    expr 
          {
-          printf("expr: %s\n", $1);
-         }
-         |
-         expre{
-          printf("expre: %d\n", $1);
-         }
-         |
-         exprf 
-         {
-          printf("exprf: %f\n", $1);
-         }
-         |
-         if_expre{
-          printf("if_expre: %d\n", $1);
+          if($1.tipo == 1){
+            int *ptr = $1.ptr;
+            printf("expr: %d\n", *ptr);
+          }else if($1.tipo == 2){
+            float *ptr = $1.ptr;
+            printf("expr: %f\n", *ptr);
+          }else if($1.tipo == 3){
+            printf("expr: %s\n", $1);
+          }
          }
          |
          racha
@@ -83,153 +82,244 @@ stat:    expr
             printf("%c: %d\n", c, d);
           }
          }
-         ;
-expr:   expr '*' expr 
-        {
-          int size = strlen($1) + strlen($3);
-          printf("s1: %s, s2: %s\n", $1, $3);
-          printf("size: %d\n", size);
-          char *new_str = malloc(size*sizeof(char));
-          int i = 0;
-          for (char *iter = $1; *iter != '\0'; iter++) {
-            printf("char %d: %c\n", i, *iter);
-            new_str[i] = *iter;
-            i++;
-          }
-          for (char *iter = $3; *iter != '\0'; iter++) {
-            printf("char %d: %c\n", i, *iter);
-            new_str[i] = *iter;
-            i++;
-          }
-          $$ = new_str;
-        }
-        | 
-        CADENA
-        ;
-expre:  '(' expre ')'
-        {
-          $$ = $2;
-        }
-        |
-        expre '*' expre 
-        {
-          $$ = $1 * $3;
-        }
-        |
-        expre '/' expre 
-        {
-          $$ = $1 / $3;
-        }
-        |
-        expre '+' expre 
-        {
-          $$ = $1 + $3;
-        }
-        |
-        expre '-' expre 
-        {
-          $$ = $1 - $3;
-        }
-        |
-        ENTERO
-        ;
-if_expre: IF '(' condition ')' '{' expre '}'
-         {
-          if ($3 == 1){
-            $$ = $6;
-          }
-         }
          |
-         IF '(' condition ')' '{' expre '}' ELSE '{' expre '}'
+         NOMBRE TIPO '=' expr
          {
-         if ($3 == 1){
-            $$ = $6;
-          }else{
-            $$ = $10;
+           if($4.tipo == $2){
+             insert($1, $4);
+           }
+         };
+expr:   '(' expr ')'
+        {
+          expr new_expr = $2;
+          $$ = new_expr;
+        }
+        |
+        expr '*' expr 
+        {
+          expr new_expr;
+          if ($1.tipo == 3 && $3.tipo == 3){
+            char *expr1 = $1.ptr;
+            char *expr2 = $3.ptr;
+            int size = strlen(expr1) + strlen(expr2);
+            char *new_str = malloc(size*sizeof(char));
+            int i = 0;
+            for (char *iter = expr1; *iter != '\0'; iter++) {
+              new_str[i] = *iter;
+              i++;
+            }
+            for (char *iter = expr2; *iter != '\0'; iter++) {
+              new_str[i] = *iter;
+              i++;
+            }
+            create_string(&new_expr, new_str);
+            $$ = new_expr;
+          }else if ($1.tipo == 1 && $3.tipo == 1){
+            int *expr1 = $1.ptr;
+            int *expr2 = $3.ptr;
+            int *new_int = malloc(sizeof(int));
+            *new_int = (*expr1) * (*expr2);
+            create_int(&new_expr, new_int);
+            $$ = new_expr;
           }
-         }
-         ;
-condition: expre EQUAL expre
-           {
-             if ($1 == $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           |
-           expr NOTEQUAL expr
-           {
-             if ($1 != $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           |
-           expr LESSEQUAL expr
-           {
-             if ($1 <= $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           |
-           expr GREATEREQUAL expr
-           {
-             if ($1 >= $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           |
-           expr '<' expr
-           {
-             if ($1 < $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           |
-           expr '>' expr
-           {
-             if ($1 > $3){
-              $$ = 1;
-             }else{
-              $$ = 0;
-             }
-           }
-           ; 
-
-exprf:  '(' exprf ')'
-        {
-          $$ = $2;
+          else if ($1.tipo == 2 && $3.tipo == 1){
+            float *expr1 = $1.ptr;
+            int *expr2 = $3.ptr;
+            float *new_float = malloc(sizeof(float));
+            *new_float = (*expr1) * (*expr2);
+            create_float(&new_expr, new_float);
+            $$ = new_expr;
+          }
+          else if ($1.tipo == 1 && $3.tipo == 2){
+            int *expr1 = $1.ptr;
+            float *expr2 = $3.ptr;
+            float *new_float = malloc(sizeof(float));
+            *new_float = (*expr1) * (*expr2);
+            create_float(&new_expr, new_float);
+            $$ = new_expr;
+          }
+          else if ($1.tipo == 2 && $3.tipo == 2){
+            float *expr1 = $1.ptr;
+            float *expr2 = $3.ptr;
+            float *new_float = malloc(sizeof(float));
+            *new_float = (*expr1) * (*expr2);
+            create_float(&new_expr, new_float);
+            $$ = new_expr;
+          }
         }
         |
-        exprf '*' exprf 
+        expr '/' expr 
         {
-          $$ = $1 * $3;
+            expr new_expr;
+            if ($1.tipo == 1 && $3.tipo == 1) {
+                int *expr1 = $1.ptr;
+                int *expr2 = $3.ptr;
+                if (*expr2 == 0) {
+                    printf("Error: división por cero\n");
+                    exit(1);
+                }
+                int *new_int = malloc(sizeof(int));
+                *new_int = (*expr1) / (*expr2);
+                create_int(&new_expr, new_int);
+            }
+            else if ($1.tipo == 2 && $3.tipo == 1){
+              float *expr1 = $1.ptr;
+              int *expr2 = $3.ptr;
+              if (*expr2 == 0) {
+                  printf("Error: división por cero\n");
+                  exit(1);
+              }
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) / (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 1 && $3.tipo == 2){
+              int *expr1 = $1.ptr;
+              float *expr2 = $3.ptr;
+              if (*expr2 == 0) {
+                  printf("Error: división por cero\n");
+                  exit(1);
+              }
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) / (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 2 && $3.tipo == 2) {
+                float *expr1 = $1.ptr;
+                float *expr2 = $3.ptr;
+                if (*expr2 == 0.0) {
+                    printf("Error: división por cero\n");
+                    exit(1);
+                }
+                float *new_float = malloc(sizeof(float));
+                *new_float = (*expr1) / (*expr2);
+                create_float(&new_expr, new_float);
+            } else {
+                printf("Error: Tipos de operandos no válidos para la división\n");
+                exit(1);
+            }
+            $$ = new_expr;
         }
         |
-        exprf '/' exprf 
+        expr '+' expr 
         {
-          $$ = $1 / $3;
+            expr new_expr;
+            if ($1.tipo == 1 && $3.tipo == 1) {
+                int *expr1 = $1.ptr;
+                int *expr2 = $3.ptr;
+                int *new_int = malloc(sizeof(int));
+                *new_int = (*expr1) + (*expr2);
+                create_int(&new_expr, new_int);
+            }
+            else if ($1.tipo == 2 && $3.tipo == 1){
+              float *expr1 = $1.ptr;
+              int *expr2 = $3.ptr;
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) + (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 1 && $3.tipo == 2){
+              int *expr1 = $1.ptr;
+              float *expr2 = $3.ptr;
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) + (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 2 && $3.tipo == 2) {
+                float *expr1 = $1.ptr;
+                float *expr2 = $3.ptr;
+                float *new_float = malloc(sizeof(float));
+                *new_float = (*expr1) + (*expr2);
+                create_float(&new_expr, new_float);
+            } else if ($1.tipo == 3 && $3.tipo == 3) {
+                char *expr1 = $1.ptr;
+                char *expr2 = $3.ptr;
+                int size = strlen(expr1) + strlen(expr2) + 1; 
+                char *new_str = malloc(size * sizeof(char));
+                strcpy(new_str, expr1);
+                strcat(new_str, expr2);
+                create_string(&new_expr, new_str);
+            } else {
+                printf("Error: Tipos de operandos no válidos para la suma\n");
+                exit(1);
+            }
+            $$ = new_expr;
         }
         |
-        exprf '+' exprf 
+        expr '-' expr 
         {
-          $$ = $1 + $3;
+            expr new_expr;
+            if ($1.tipo == 1 && $3.tipo == 1) {
+                int *expr1 = $1.ptr;
+                int *expr2 = $3.ptr;
+                int *new_int = malloc(sizeof(int));
+                *new_int = (*expr1) - (*expr2);
+                create_int(&new_expr, new_int);
+            }
+            else if ($1.tipo == 2 && $3.tipo == 1){
+              float *expr1 = $1.ptr;
+              int *expr2 = $3.ptr;
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) - (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 1 && $3.tipo == 2){
+              int *expr1 = $1.ptr;
+              float *expr2 = $3.ptr;
+              float *new_float = malloc(sizeof(float));
+              *new_float = (*expr1) - (*expr2);
+              create_float(&new_expr, new_float);
+              $$ = new_expr;
+            }
+            else if ($1.tipo == 2 && $3.tipo == 2) {
+                float *expr1 = $1.ptr;
+                float *expr2 = $3.ptr;
+                float *new_float = malloc(sizeof(float));
+                *new_float = (*expr1) - (*expr2);
+                create_float(&new_expr, new_float);
+            } else {
+                printf("Error: Tipos de operandos no válidos para la resta\n");
+                exit(1);
+            }
+            $$ = new_expr;
         }
         |
-        exprf '-' exprf 
-        {
-          $$ = $1 - $3;
+        CADENA {
+          expr new_expr;
+          create_string(&new_expr, $1);
+          $$ = new_expr;
         }
         |
-        FLOTANTE
+        ENTERO {
+          expr new_expr;
+          int *new_int = malloc(sizeof(int));
+          *new_int = $1;
+          create_int(&new_expr, new_int);
+          $$ = new_expr;
+        }
+        |
+        FLOTANTE {
+          expr new_expr;
+          float *new_float = malloc(sizeof(float));
+          *new_float = $1;
+          create_float(&new_expr, new_float);
+          $$ = new_expr;
+        }
+        |
+        NOMBRE {
+          $$ = get($1);
+        }
+        |
+        for_expr
+        |
+        while_expr
+        |
+        if_expr
         ;
 racha:  CADENA '?'
         {
@@ -248,6 +338,208 @@ racha:  CADENA '?'
           }
         }
         ;
+for_expr: FOR '(' expr ';' condition ';' expr ')' '{' expr '}'
+         {
+          $3;
+          while ($5) {
+            $$ = $10;
+            $7;
+          }
+         }
+         ;
+while_expr: WHILE '(' condition ')' '{' expr '}'
+           {
+            while ($3){
+              $$ = $6;
+            }
+           }
+           ;
+if_expr: IF '(' condition ')' '{' expr '}'
+         {
+          if ($3 == 1){
+            $$ = $6;
+          }
+         }
+         |
+         IF '(' condition ')' '{' expr '}' ELSE '{' expr '}'
+         {
+         if ($3 == 1){
+            $$ = $6;
+          }else{
+            $$ = $10;
+          }
+         }
+         
+condition:  expr EQ expr
+            {
+              int result;
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  result = (*((int*)$1.ptr) == *((int*)$3.ptr)) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  result = (*((int*)$1.ptr) == *((float*)$3.ptr)) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  result = (*((float*)$1.ptr) == *((int*)$3.ptr)) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  result = (*((float*)$1.ptr) == *((float*)$3.ptr)) ? 1 : 0;
+                }
+              }else if ($1.tipo == 3 && $3.tipo == 3) {
+                result = (strcmp($1.ptr, $3.ptr) == 0) ? 1 : 0;
+              }
+              $$ = result;
+            }
+            |
+            expr NE expr
+            {
+              int result;
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  result = (*((int*)$1.ptr) != *((int*)$3.ptr)) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  result = (*((int*)$1.ptr) != *((float*)$3.ptr)) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  result = (*((float*)$1.ptr) != *((int*)$3.ptr)) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  result = (*((float*)$1.ptr) != *((float*)$3.ptr)) ? 1 : 0;
+                }
+              } else if ($1.tipo == 3 && $3.tipo == 3) {
+                result = (strcmp($1.ptr, $3.ptr) != 0) ? 1 : 0;
+              }
+              $$ = result;
+            }
+            |
+            expr LE expr
+            {
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  int value1 = *((int*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 <= value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  int value1 = *((int*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 <= value2) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  float value1 = *((float*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 <= value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  float value1 = *((float*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 <= value2) ? 1 : 0;
+                }
+              } else {
+                  // Manejo de error si los tipos no son compatibles o no están definidos
+                  fprintf(stderr, "Tipos de datos incompatibles para la comparación <=\n");
+                  exit(EXIT_FAILURE);
+              }
+            }
+            |
+            expr GE expr
+            {
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  int value1 = *((int*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 >= value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  int value1 = *((int*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 >= value2) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  float value1 = *((float*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 >= value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  float value1 = *((float*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 >= value2) ? 1 : 0;
+                }
+              } else {
+                  // Manejo de error si los tipos no son compatibles o no están definidos
+                  fprintf(stderr, "Tipos de datos incompatibles para la comparación <=\n");
+                  exit(EXIT_FAILURE);
+              }
+            }
+            |
+            expr '<' expr
+            {
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  int value1 = *((int*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 < value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  int value1 = *((int*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 < value2) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  float value1 = *((float*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 < value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  float value1 = *((float*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 < value2) ? 1 : 0;
+                }
+              } else {
+                  // Manejo de error si los tipos no son compatibles o no están definidos
+                fprintf(stderr, "Tipos de datos incompatibles para la comparación <\n");
+                exit(EXIT_FAILURE);
+              }
+            }
+            |
+            expr '>' expr
+            {
+              if($1.tipo == 1){
+                if($3.tipo == 1){
+                  int value1 = *((int*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 > value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  int value1 = *((int*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 > value2) ? 1 : 0;
+                }
+              }else if ($1.tipo == 2){
+                if($3.tipo == 1){
+                  float value1 = *((float*)$1.ptr);  
+                  int value2 = *((int*)$3.ptr);  
+                  $$ = (value1 > value2) ? 1 : 0;
+                }
+                else if($3.tipo == 2){
+                  float value1 = *((float*)$1.ptr);  
+                  float value2 = *((float*)$3.ptr);  
+                  $$ = (value1 > value2) ? 1 : 0;
+                }
+              } else {
+                  // Manejo de error si los tipos no son compatibles o no están definidos
+                fprintf(stderr, "Tipos de datos incompatibles para la comparación >\n");
+                exit(EXIT_FAILURE);
+              }
+            }
+            ; 
 
 %%
 int main()

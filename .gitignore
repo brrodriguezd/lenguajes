@@ -1,7 +1,6 @@
-**.c
-!**/linked_list.c
-**.h
+src/*.c
+src/*.h
 **.out
 **/__pychache__/
 **/.venv/
-**/program*
+**/programa

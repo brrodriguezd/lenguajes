@@ -28,7 +28,10 @@ NOMBRE     {MINUSCULAS}+
                 yylval.i = 2;
                 return(TIPO);
               }
-
+\:racha         { 
+                yylval.i = 4;
+                return(TIPO);
+              }
 {FLOTANTE}    {
                 float value_f = atof(yytext);
                 yylval.f = value_f;

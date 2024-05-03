@@ -8,4 +8,5 @@ typedef struct Expr {
 void create_int(expr *expresion, void *ptr);
 void create_float(expr *expresion, void *ptr);
 void create_string(expr *expresion, void *ptr);
+void create_racha(expr *expresion, void *ptr);
 #endif

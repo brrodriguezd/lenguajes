@@ -14,3 +14,8 @@ void create_string(expr *expresion, void *ptr) {
   expresion->ptr = ptr;
   expresion->tipo = 3;
 }
+
+void create_racha(expr *expresion, void *ptr) {
+	expresion->ptr = ptr;
+	expresion->tipo = 4;
+}

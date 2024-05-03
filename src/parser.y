@@ -5,6 +5,7 @@
 #include "./lib/expr.h"
 #include "./lib/diccionario.c"
 
+extern FILE *yyin;
 int yylex(void);
 int yyerror(char* s);
 int regs[26] = {0}; //26 del alfabeto
@@ -29,6 +30,8 @@ linked_list lista;
 %token <f> FLOTANTE
 %token <s> NOMBRE
 %token <i> TIPO
+%token <e> ARRAY_INT
+%token <e> ARRAY_FLOAT
 
 %token IF
 %token ELSE
@@ -71,6 +74,16 @@ stat:    expr
             printf("expr: %f\n", *ptr);
           }else if($1.tipo == 3){
             printf("expr: %s\n", $1);
+          }else if($1.tipo == 4){
+            int *ptr = $1.ptr;
+            for (int i = 0; i < $1.size; i++){
+              printf("arr[%d]: %d\n", i, ptr[i]);
+            }
+          }else if($1.tipo == 5){
+            float *ptr = $1.ptr;
+            for (int i = 0; i < $1.size; i++){
+              printf("arr[%d]: %f\n", i, ptr[i]);
+            }
           }
          }
          |
@@ -83,8 +96,12 @@ stat:    expr
           }
          }
          |
-         NOMBRE TIPO '=' expr
+         declaracion{}
+         |;
+
+declaracion: NOMBRE TIPO '=' expr
          {
+           //la expresión tiene que ser del tipo correcto
            if($4.tipo == $2){
              insert($1, $4);
            }
@@ -203,6 +220,8 @@ expr:   '(' expr ')'
             $$ = new_expr;
         }
         |
+        ARRAY_INT|
+        ARRAY_FLOAT|
         expr '+' expr 
         {
             expr new_expr;
@@ -291,7 +310,11 @@ expr:   '(' expr ')'
         |
         CADENA {
           expr new_expr;
-          create_string(&new_expr, $1);
+          int size = strlen($1);
+          char * new_str = malloc(size*sizeof(char));
+          strcpy(new_str, $1);
+          printf("%s\n",new_str);
+          create_string(&new_expr, new_str);
           $$ = new_expr;
         }
         |
@@ -312,7 +335,13 @@ expr:   '(' expr ')'
         }
         |
         NOMBRE {
-          $$ = get($1);
+          int *success;
+          expr new_expr = get($1, success);
+          if (*success == 0){
+            //fprintf(stderr, "Error, la variable no existe\n");
+            exit(EXIT_FAILURE);
+          }
+          $$ = new_expr;
         }
         |
         for_expr
@@ -544,7 +573,10 @@ condition:  expr EQ expr
 %%
 int main()
 {
-  return(yyparse());
+  yyin = fopen("testfile", "r");
+  yyparse();
+  fclose(yyin);
+  return 0;
 }
 
 int yyerror(s)

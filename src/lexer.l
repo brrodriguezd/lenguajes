@@ -4,34 +4,44 @@
 #include "lib/expr.h"
 int c;
 char *string;
+int lineCount = 0;
 %}
 /*Las cadenas deberian ser en minuscula y en mayuscula el alfabeto*/
 COMENTARIO  "//".*
 MINUSCULAS  [a-z]
 ALFABETO    [A-Z]
-ESPACIOS    [\t|" "]*
+ESPACIOS    (\t|" ")*
 DIGITO      [0-9]
 ENTERO      {DIGITO}+
 FLOTANTE    {DIGITO}+"."{DIGITO}+
 CADENA      \"{MINUSCULAS}+\"
 NOMBRE      {MINUSCULAS}+
-ARRAY_INT   \[{ENTERO}(,{ENTERO})*\]
-ARRAY_FLOAT \[{FLOTANTE}[,{FLOTANTE}]*\]
+ARRAY_INT   \[{ENTERO}(,{ENTERO})*,?\]
+ARRAY_FLOAT \[{FLOTANTE}(,{FLOTANTE})*,?\]
 /**/
 %%
-\:int           { 
+{COMENTARIO}  ;
+{ESPACIOS}    ;
+\:int         { 
                 yylval.i = 1;
                 return(TIPO); 
               }
-\:string        { 
-                yylval.i = 3;
-                return(TIPO); 
-              }
-\:float         { 
+\:float       { 
                 yylval.i = 2;
                 return(TIPO);
               }
-
+\:string      { 
+                yylval.i = 3;
+                return(TIPO); 
+              }
+\:\[int\]     { 
+                yylval.i = 4;
+                return(TIPO); 
+              }
+\:\[float\]   { 
+                yylval.i = 5;
+                return(TIPO); 
+              }
 if            { return(IF); }
 else          { return(ELSE); }
 for           { return(FOR); }
@@ -49,13 +59,14 @@ while         { return(WHILE); }
               }
 {ARRAY_INT}   {
                 int contador=1;
-                char *string = yytext;
-                for (char *iter = string+1; *iter != ']'; iter++){
+                char *string = yytext+1;
+                for (char *iter = string; *iter != ']'; iter++){
                   if(*iter == ','){
                     contador++;
                   }
                 }
-                int array[contador];
+                //int array[contador];
+                int *array = malloc(contador * sizeof(int));
                 char *token =strtok(string, ",");
                 array[0] = atoi(token);
                 for (int i = 1; i < contador; i++){
@@ -65,41 +76,39 @@ while         { return(WHILE); }
                   }
                   array[i] = atoi(token);
                 }
-                expr expr;
-                create_int_array(&expr,array,contador);
-                yylval.e = expr;
+                expr *expr = malloc(sizeof(expr));
+                create_int_array(expr,array,contador);
+                yylval.p = expr;
                 return(ARRAY_INT);
               }
 {ARRAY_FLOAT} {
                 int contador=1;
-                for (char *iter = yytext+1; *iter != ']'; iter++){
+                char *string = yytext+1;
+                for (char *iter = string; *iter != ']'; iter++){
                   if(*iter == ','){
                     contador++;
                   }
                 }
-                float array[contador];
-                char *string = yytext+1;
+                float *array = malloc(contador * sizeof(float));
                 char *token =strtok(string, ",");
                 array[0] = atof(token);
-                for (int i = 0; i < contador; i++){
+                for (int i = 1; i < contador; i++){
                   token = strtok(NULL,",");
                   if(token == NULL){
                     token = strtok(NULL,"]");
                   }
-                  array[i+1] = atof(token);
+                  array[i] = atof(token);
                 }
                 expr expr;
                 create_float_array(&expr,array,contador);
-                yylval.e = expr;
+                yylval.p = &expr;
                 return(ARRAY_FLOAT);
               }
-{ESPACIOS}    ;
 {ALFABETO}    {
                 int A = yytext[0];
                 yylval.a = A;
                 return (ALFABETO);
               }
-{COMENTARIO}  ;
 {CADENA}      {
                 int size = strlen(yytext);
                 char *value_s = malloc(size*sizeof(char));

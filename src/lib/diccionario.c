@@ -1,5 +1,4 @@
 #include "expr.h"
-#include <stdio.h>
 #include <string.h>
 
 #define MAX_SIZE 100 // Maximum number of elements in the map
@@ -35,13 +34,11 @@ void insert(char key[], expr value) {
 expr get(char key[], int *success) {
   int index = getIndex(key);
   if (index == -1) { // Key not found
-    printf("variable no encontrada");
     expr new_expr;
     *success = 0;
     return new_expr;
   } else { // Key found
     *success = 1;
-    printf("estoy aqui?");
     return values[index];
   }
 }

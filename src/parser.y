@@ -21,7 +21,7 @@ linked_list lista;
   #include "./lib/expr.h"
 }
 
-%union { int a; char* s; int i; float f; expr e;} /*Definición de tipos*/
+%union { int a; char* s; int i; float f; expr e; expr* p; } /*Definición de tipos*/
 
 
 %token <s> CADENA
@@ -30,8 +30,8 @@ linked_list lista;
 %token <f> FLOTANTE
 %token <s> NOMBRE
 %token <i> TIPO
-%token <e> ARRAY_INT
-%token <e> ARRAY_FLOAT
+%token <p> ARRAY_INT
+%token <p> ARRAY_FLOAT
 
 %token IF
 %token ELSE
@@ -43,7 +43,6 @@ linked_list lista;
 %token LE
 %token GE
 
-%left '?'
 %left '+' '-'
 %left '*' '/' '%'
 
@@ -51,8 +50,8 @@ linked_list lista;
 %type<e> expr
 %type<e> for_expr
 %type<e> while_expr
-%type<e> if_expr
 %type<i> condition
+%type<e> if
 %%                   /* beginning of rules section */
 
 list:                       /*empty */
@@ -68,21 +67,21 @@ stat:    expr
          {
           if($1.tipo == 1){
             int *ptr = $1.ptr;
-            printf("expr: %d\n", *ptr);
+            printf("expr (int): %d\n", *ptr);
           }else if($1.tipo == 2){
             float *ptr = $1.ptr;
-            printf("expr: %f\n", *ptr);
+            printf("expr (float): %f\n", *ptr);
           }else if($1.tipo == 3){
-            printf("expr: %s\n", $1);
+            printf("expr (cadena): %s\n", $1);
           }else if($1.tipo == 4){
             int *ptr = $1.ptr;
             for (int i = 0; i < $1.size; i++){
-              printf("arr[%d]: %d\n", i, ptr[i]);
+              printf("arr[i:%d]: %d\n", i, ptr[i]);
             }
           }else if($1.tipo == 5){
             float *ptr = $1.ptr;
             for (int i = 0; i < $1.size; i++){
-              printf("arr[%d]: %f\n", i, ptr[i]);
+              printf("arr[f:%d]: %f\n", i, ptr[i]);
             }
           }
          }
@@ -96,14 +95,17 @@ stat:    expr
           }
          }
          |
-         declaracion{}
-         |;
+         declaracion
+         ;
 
 declaracion: NOMBRE TIPO '=' expr
          {
            //la expresión tiene que ser del tipo correcto
            if($4.tipo == $2){
              insert($1, $4);
+           }else{
+            fprintf(stderr, "Error, la variable %s no es compatible con el tipo asignado\n", $1);
+            exit(EXIT_FAILURE);
            }
          };
 expr:   '(' expr ')'
@@ -220,8 +222,6 @@ expr:   '(' expr ')'
             $$ = new_expr;
         }
         |
-        ARRAY_INT|
-        ARRAY_FLOAT|
         expr '+' expr 
         {
             expr new_expr;
@@ -338,17 +338,25 @@ expr:   '(' expr ')'
           int *success;
           expr new_expr = get($1, success);
           if (*success == 0){
-            //fprintf(stderr, "Error, la variable no existe\n");
+            fprintf(stderr, "Error, la variable %s no existe\n", $1);
             exit(EXIT_FAILURE);
           }
           $$ = new_expr;
+        }
+        |
+        ARRAY_INT {
+          $$ = *$1;
+        }
+        |
+        ARRAY_FLOAT{
+          $$ = *$1;
         }
         |
         for_expr
         |
         while_expr
         |
-        if_expr
+        if
         ;
 racha:  CADENA '?'
         {
@@ -383,19 +391,19 @@ while_expr: WHILE '(' condition ')' '{' expr '}'
             }
            }
            ;
-if_expr: IF '(' condition ')' '{' expr '}'
+if:      IF '(' condition ')' '{' expr '}'
          {
           if ($3 == 1){
-            $$ = $6;
+            $6;
           }
          }
          |
          IF '(' condition ')' '{' expr '}' ELSE '{' expr '}'
          {
          if ($3 == 1){
-            $$ = $6;
+            $6;
           }else{
-            $$ = $10;
+            $10;
           }
          }
          

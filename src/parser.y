@@ -45,6 +45,7 @@ linked_list lista;
 
 %left '+' '-'
 %left '*' '/' '%'
+%left ':'
 
 %type<s> racha
 %type<e> expr
@@ -66,23 +67,27 @@ list:                       /*empty */
 stat:    expr 
          {
           if($1.tipo == 1){
-            int *ptr = $1.ptr;
-            printf("expr (int): %d\n", *ptr);
+            if($1.size == 1){
+              int *ptr = $1.ptr;
+              printf("expr (int): %d\n", *ptr);
+            }else{
+              int *ptr = $1.ptr;
+              for (int i = 0; i < $1.size; i++){
+                printf("arr[i:%d]: %d\n", i, ptr[i]);
+              }
+            }
           }else if($1.tipo == 2){
+            if($1.size == 1){
+              float *ptr = $1.ptr;
+              printf("expr (float): %f\n", *ptr);
+            }else{
             float *ptr = $1.ptr;
-            printf("expr (float): %f\n", *ptr);
+              for (int i = 0; i < $1.size; i++){
+                printf("arr[f:%d]: %f\n", i, ptr[i]);
+              }
+            }
           }else if($1.tipo == 3){
             printf("expr (cadena): %s\n", $1);
-          }else if($1.tipo == 4){
-            int *ptr = $1.ptr;
-            for (int i = 0; i < $1.size; i++){
-              printf("arr[i:%d]: %d\n", i, ptr[i]);
-            }
-          }else if($1.tipo == 5){
-            float *ptr = $1.ptr;
-            for (int i = 0; i < $1.size; i++){
-              printf("arr[f:%d]: %f\n", i, ptr[i]);
-            }
           }
          }
          |
@@ -112,8 +117,7 @@ expr:   '(' expr ')'
         {
           expr new_expr = $2;
           $$ = new_expr;
-        }
-        |
+        }|
         expr '*' expr 
         {
           expr new_expr;
@@ -165,8 +169,7 @@ expr:   '(' expr ')'
             create_float(&new_expr, new_float);
             $$ = new_expr;
           }
-        }
-        |
+        }|
         expr '/' expr 
         {
             expr new_expr;
@@ -220,8 +223,7 @@ expr:   '(' expr ')'
                 exit(1);
             }
             $$ = new_expr;
-        }
-        |
+        }|
         expr '+' expr 
         {
             expr new_expr;
@@ -267,8 +269,7 @@ expr:   '(' expr ')'
                 exit(1);
             }
             $$ = new_expr;
-        }
-        |
+        }|
         expr '-' expr 
         {
             expr new_expr;
@@ -306,8 +307,39 @@ expr:   '(' expr ')'
                 exit(1);
             }
             $$ = new_expr;
-        }
-        |
+        }|
+        expr ':' expr {
+          if($3.tipo != 4 && $3.size != 1){
+            fprintf(stderr, "Error, no es un índice entero\n");
+            exit(EXIT_FAILURE);
+          }
+          int *indice = $3.ptr;
+          int *success;
+          if(*indice > $1.size-1){
+            fprintf(stderr, "Error, el índice %d está fuera del arreglo\n", *indice);
+            exit(EXIT_FAILURE);
+          }
+          if($1.size == 1){
+            fprintf(stderr, "Error, la variable no es un arreglo\n");
+            exit(EXIT_FAILURE);
+          }
+          switch($1.tipo){
+            case 1:
+              int *new_int = $1.ptr;
+              //printf("%d", *indice);
+              create_int(&$1, &new_int[*indice]);
+              break;
+            case 2:
+              float *new_float = $1.ptr;
+              create_float(&$1, &new_float[*indice]);
+            break;
+            default:
+              fprintf(stderr, "Error, %s no es un arreglo\n", $1);
+              exit(EXIT_FAILURE);
+            break;
+          }
+          $$ = $1;
+        }|
         CADENA {
           expr new_expr;
           int size = strlen($1);
@@ -316,24 +348,27 @@ expr:   '(' expr ')'
           printf("%s\n",new_str);
           create_string(&new_expr, new_str);
           $$ = new_expr;
-        }
-        |
+        }|
         ENTERO {
           expr new_expr;
           int *new_int = malloc(sizeof(int));
           *new_int = $1;
           create_int(&new_expr, new_int);
           $$ = new_expr;
-        }
-        |
+        }|
         FLOTANTE {
           expr new_expr;
           float *new_float = malloc(sizeof(float));
           *new_float = $1;
           create_float(&new_expr, new_float);
           $$ = new_expr;
-        }
-        |
+        }|
+        ARRAY_INT {
+          $$ = *$1;
+        }|
+        ARRAY_FLOAT{
+          $$ = *$1;
+        }|
         NOMBRE {
           int *success;
           expr new_expr = get($1, success);
@@ -342,20 +377,9 @@ expr:   '(' expr ')'
             exit(EXIT_FAILURE);
           }
           $$ = new_expr;
-        }
-        |
-        ARRAY_INT {
-          $$ = *$1;
-        }
-        |
-        ARRAY_FLOAT{
-          $$ = *$1;
-        }
-        |
-        for_expr
-        |
-        while_expr
-        |
+        }|
+        for_expr|
+        while_expr|
         if
         ;
 racha:  CADENA '?'
@@ -406,6 +430,7 @@ if:      IF '(' condition ')' '{' expr '}'
             $10;
           }
          }
+         ;
          
 condition:  expr EQ expr
             {

@@ -20,12 +20,12 @@ void create_string(expr *expresion, void *ptr) {
 
 void create_int_array(expr *expresion, void *ptr, int size) {
   expresion->ptr = ptr;
-  expresion->tipo = 4;
+  expresion->tipo = 1;
   expresion->size = size;
 }
 
 void create_float_array(expr *expresion, void *ptr, int size) {
   expresion->ptr = ptr;
-  expresion->tipo = 5;
+  expresion->tipo = 2;
   expresion->size = size;
 }

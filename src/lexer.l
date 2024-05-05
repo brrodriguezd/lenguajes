@@ -4,7 +4,6 @@
 #include "lib/expr.h"
 int c;
 char *string;
-int lineCount = 0;
 %}
 /*Las cadenas deberian ser en minuscula y en mayuscula el alfabeto*/
 COMENTARIO  "//".*
@@ -35,11 +34,11 @@ ARRAY_FLOAT \[{FLOTANTE}(,{FLOTANTE})*,?\]
                 return(TIPO); 
               }
 \:\[int\]     { 
-                yylval.i = 4;
+                yylval.i = 1;
                 return(TIPO); 
               }
 \:\[float\]   { 
-                yylval.i = 5;
+                yylval.i = 2;
                 return(TIPO); 
               }
 if            { return(IF); }

@@ -23,6 +23,7 @@ ARRAY_FLOAT \[{FLOTANTE}(,{FLOTANTE})*,?\]
 {COMENTARIO}  ;
 {ESPACIOS}    ;
 {BLOQUEC}     ;
+\n            ;
 \:int         { 
                 yylval.i = 1;
                 return(TIPO); 

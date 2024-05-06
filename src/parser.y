@@ -57,9 +57,9 @@ linked_list lista;
 
 list:                       /*empty */
          |
-        list stat '\n'
+        list stat ';'
          |
-        list error '\n'
+        list error ';'
          {
            yyerrok;
          }
@@ -418,16 +418,16 @@ while_expr: WHILE '(' condition ')' '{' expr '}'
 if:      IF '(' condition ')' '{' expr '}'
          {
           if ($3 == 1){
-            $6;
+            $$ = $6;
           }
          }
          |
          IF '(' condition ')' '{' expr '}' ELSE '{' expr '}'
          {
          if ($3 == 1){
-            $6;
+            $$= $6;
           }else{
-            $10;
+            $$=$10;
           }
          }
          ;

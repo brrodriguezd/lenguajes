@@ -1,5 +1,12 @@
-arr:[int] = [3,4,5] 
+arr:[int] = [3,4,5];
 /*comentario
 comentarios
 */
-arr:[2]
+arr:[2];
+4*3;
+
+if(4==3){
+    4*4
+}else{
+    4
+};

@@ -1,2 +1,5 @@
-arr :[int] = [3,4,5]
-arr:[3]
+arr:[int] = [3,4,5] 
+/*comentario
+comentarios
+*/
+arr:[2]

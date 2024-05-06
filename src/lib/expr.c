@@ -29,3 +29,9 @@ void create_float_array(expr *expresion, void *ptr, int size) {
   expresion->tipo = 2;
   expresion->size = size;
 }
+
+void create_modelo(expr *expresion, void *ptr, int size) {
+  expresion->ptr = ptr;
+  expresion->tipo = 4;
+  expresion->size = 3;
+}

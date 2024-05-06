@@ -6,7 +6,8 @@ int c;
 char *string;
 %}
 /*Las cadenas deberian ser en minuscula y en mayuscula el alfabeto*/
-COMENTARIO  "//".*
+COMENTARIO  "//".*\n
+BLOQUEC     "/*"(.*\n)*"*/"\n
 MINUSCULAS  [a-z]
 ALFABETO    [A-Z]
 ESPACIOS    (\t|" ")*
@@ -21,6 +22,7 @@ ARRAY_FLOAT \[{FLOTANTE}(,{FLOTANTE})*,?\]
 %%
 {COMENTARIO}  ;
 {ESPACIOS}    ;
+{BLOQUEC}     ;
 \:int         { 
                 yylval.i = 1;
                 return(TIPO); 

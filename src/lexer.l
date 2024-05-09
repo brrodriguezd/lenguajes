@@ -10,7 +10,7 @@ COMENTARIO  "//".*\n
 BLOQUEC     "/*"(.*\n)*"*/"\n
 MINUSCULAS  [a-z]
 ALFABETO    [A-Z]
-ESPACIOS    (\t|" ")*
+ESPACIOS    [ \t\r\n]+
 DIGITO      [0-9]
 ENTERO      {DIGITO}+
 FLOTANTE    {DIGITO}+"."{DIGITO}+
@@ -23,7 +23,6 @@ ARRAY_FLOAT \[{FLOTANTE}(,{FLOTANTE})*,?\]
 {COMENTARIO}  ;
 {ESPACIOS}    ;
 {BLOQUEC}     ;
-\n            ;
 \:int         { 
                 yylval.i = 1;
                 return(TIPO); 

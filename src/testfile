@@ -5,8 +5,13 @@ comentarios
 arr:[2];
 4*3;
 
-if(4==3){
-    4*4
+if(3==3){
+    4*4;
+    4*3;
 }else{
-    4
-};
+    3*3;
+}
+entero :int = 3;
+entero;
+i :int = 0;
+i;

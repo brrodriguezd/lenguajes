@@ -6,7 +6,6 @@
 #include "./lib/diccionario.c"
 
 extern FILE *yyin;
-extern int lineas;
 int yylex(void);
 int yyerror(char* s);
 int regs[26] = {0}; //26 del alfabeto
@@ -108,8 +107,7 @@ for         : FOR '(' declaracion ';' condition ';' expr ')' '{' list '}'
             ;
 while       : WHILE '(' condition ')' '{' list '}'
             {
-              while ($3){
-              }
+              makeWhile ($3, $6);
             }
             ;
 if          : IF '(' condition ')' '{' list '}'
@@ -509,7 +507,7 @@ condition   : expr EQ expr
                 }
               } else {
                 // Manejo de error si los tipos no son compatibles o no están definidos
-                fprintf(stderr, "Tipos de datos incompatibles para la comparación <=\n");
+                fprintf(stderr, "Tipos de datos incompatibles para la comparación >=\n");
                 exit(EXIT_FAILURE);
               }
             }
@@ -592,7 +590,3 @@ char *s;
   fprintf(stderr, "%s\n",s);
 }
 
-int yywrap()
-{
-  return(1);
-}

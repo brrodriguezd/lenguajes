@@ -5,6 +5,7 @@
 int c;
 char *string;
 %}
+%option noyywrap 
 /*Las cadenas deberian ser en minuscula y en mayuscula el alfabeto*/
 COMENTARIO  "//".*\n
 BLOQUEC     "/*"(.*\n)*"*/"\n

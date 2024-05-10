@@ -52,12 +52,13 @@ linked_list lista;
 %type<i> condition
 %type<s> declaracion
 %%                   
-list        :                           /*empty */
+list        : /*empty */
             | list stat ';'
-            | list error ';'
-            | list if
+            | list if_true
+            | list if_false
             | list while
             | list for
+            | list error '}'
             {
               yyerrok;
             }
@@ -107,13 +108,28 @@ for         : FOR '(' declaracion ';' condition ';' expr ')' '{' list '}'
             ;
 while       : WHILE '(' condition ')' '{' list '}'
             {
-              makeWhile ($3, $6);
             }
             ;
-if          : IF '(' condition ')' '{' list '}'
-            | IF '(' condition ')' '{' list '}' ELSE '{' list '}'
-            ;
+
          
+if_false    : ELSE '{' list '}'
+            ;
+if_true     : cond_if '{' list '}' 
+            | cond_if '{' list '}' ELSE 
+            {
+              YYERROR;
+            }
+            ;
+
+
+cond_if     : IF '(' condition ')'
+            {
+              if($3 == 0){
+                YYERROR;
+              }
+            }
+            ;
+
 declaracion : NOMBRE TIPO '=' expr
             {
               //la expresión tiene que ser del tipo correcto

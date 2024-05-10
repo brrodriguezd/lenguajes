@@ -4,6 +4,7 @@
 #include "lib/expr.h"
 int c;
 char *string;
+int lines = 0;
 %}
 %option noyywrap 
 /*Las cadenas deberian ser en minuscula y en mayuscula el alfabeto*/

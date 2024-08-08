@@ -31,6 +31,53 @@ void insert(char key[], ASTNode *value) {
   }
 }
 
+// Insertar o actualizar
+void update(char key[], ASTNode *value) {
+  int index = getIndex(key);
+
+  if (index == -1) { // Key not found
+    printf("ERROR: Variable %s no declarada", key);
+    return;
+  }
+  if (values[index]->type != value->type) {
+    printf("ERROR: Variable %s no es del tipo %s", key,
+           get_enum_name(value->type));
+    return;
+  }
+  values[index]->value = value->value;
+}
+void update_arr(char key[], ASTNode *value, ASTNode *index) {
+  int idx = getIndex(key);
+
+  if (index->type != _INT) {
+    printf("ERROR: El indice no es entero\n");
+  }
+  if (idx == -1) { // Key not found
+    printf("ERROR: Variable %s no declarada\n", key);
+    return;
+  }
+  if (values[idx]->type == _INT_ARR) {
+    if (value->type != _INT) {
+      printf("ERROR: el tipo asignado es diferente al arreglo %s\n", key);
+      return;
+    }
+    if (values[idx]->value.iarr.size <= index->value.ival) {
+      printf("ERROR: El arreglo %s es más pequeño que el índice\n", key);
+      return;
+    }
+    values[idx]->value.iarr.array[index->value.ival] = value->value.ival;
+  }
+  if (values[idx]->type == _FLOAT_ARR) {
+    if (value->type != _FLOAT) {
+      printf("ERROR: el tipo asignado es diferente al arreglo %s\n", key);
+    }
+    if (values[idx]->value.farr.size <= index->value.ival) {
+      printf("ERROR: El arreglo %s es más pequeño que el índice\n", key);
+      return;
+    }
+    values[idx]->value.farr.array[index->value.ival] = value->value.fval;
+  }
+}
 // Function to get the value of a key in the map
 // with a flag to indicate something wrong
 ASTNode *get(char key[]) {

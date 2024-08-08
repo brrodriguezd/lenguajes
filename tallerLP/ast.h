@@ -30,7 +30,10 @@ enum types {
   _aCADENA,
   _PRINT,
   /*SINGLE VALUE FROM ARRAY*/
-  _SVARR
+  _SVARR,
+  _RELOC,
+  _RELOC_ARR,
+  _RELOC_ARR_AUX
 };
 
 char *get_enum_name(enum types type);
@@ -41,6 +44,7 @@ typedef struct ASTNode {
     char *identifier;
     int ival;
     float fval;
+    char *sval;
     struct iarr {
       int *array;
       int size;
@@ -49,7 +53,6 @@ typedef struct ASTNode {
       float *array;
       int size;
     } farr;
-    char *sval;
   } value;
   struct ASTNode *left;
   struct ASTNode *right;

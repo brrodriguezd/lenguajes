@@ -464,41 +464,69 @@ ASTNode *executeAST(ASTNode *node) {
     return NULL;
   }
   case _aINT: {
-    ASTNode *lp = executeAST(node->right);
-    if (lp == NULL) {
+    ASTNode *rp = executeAST(node->right);
+    if (rp == NULL) {
       printf("ERROR: _aINT\n");
       return NULL;
     }
-    if (lp->type != _INT) {
-      printf("ERROR: Asignacion de tipo %s en INT\n", get_enum_name(lp->type));
+    if (rp->type != _INT) {
+      printf("ERROR: Asignacion de tipo %s en INT\n", get_enum_name(rp->type));
     }
-    insert(node->left->value.identifier, lp);
+    insert(node->left->value.identifier, rp);
+    return NULL;
+  }
+  case _aINT_ARR: {
+    ASTNode *rp = executeAST(node->right);
+    if (rp == NULL) {
+      printf("ERROR: _aINTARR\n");
+      return NULL;
+    }
+    if (rp->type != _INT_ARR) {
+      printf("ERROR: Asignacion de tipo %s en arreglo INT\n",
+             get_enum_name(rp->type));
+      return NULL;
+    }
+    insert(node->left->value.identifier, rp);
     return NULL;
   }
   case _aFLOAT: {
-    ASTNode *lp = executeAST(node->right);
-    if (lp == NULL) {
+    ASTNode *rp = executeAST(node->right);
+    if (rp == NULL) {
       printf("ERROR: _aFLOAT\n");
       return NULL;
     }
-    if (lp->type != _FLOAT) {
+    if (rp->type != _FLOAT) {
       printf("ERROR: Asignacion de tipo %s en FLOAT\n",
-             get_enum_name(lp->type));
+             get_enum_name(rp->type));
     }
-    insert(node->left->value.identifier, lp);
+    insert(node->left->value.identifier, rp);
+    return NULL;
+  }
+  case _aFLOAT_ARR: {
+    ASTNode *rp = executeAST(node->right);
+    if (rp == NULL) {
+      printf("ERROR: _aINTARR\n");
+      return NULL;
+    }
+    if (rp->type != _FLOAT_ARR) {
+      printf("ERROR: Asignacion de tipo %s en arreglo INT\n",
+             get_enum_name(rp->type));
+      return NULL;
+    }
+    insert(node->left->value.identifier, rp);
     return NULL;
   }
   case _aCADENA: {
-    ASTNode *lp = executeAST(node->right);
-    if (lp == NULL) {
+    ASTNode *rp = executeAST(node->right);
+    if (rp == NULL) {
       printf("ERROR: _aCADENA\n");
       return NULL;
     }
-    if (lp->type != _CADENA) {
+    if (rp->type != _CADENA) {
       printf("ERROR: Asignacion de tipo %s en CADENA\n",
-             get_enum_name(lp->type));
+             get_enum_name(rp->type));
     }
-    insert(node->left->value.identifier, lp);
+    insert(node->left->value.identifier, rp);
     return NULL;
   }
   case _PRINT: {
@@ -542,12 +570,39 @@ ASTNode *executeAST(ASTNode *node) {
       return NULL;
     }
     if (lp->type == _INT_ARR) {
-      return createFloatNode(lp->value.iarr.array[rp->value.ival]);
+      return createIntNode(lp->value.iarr.array[rp->value.ival]);
     }
     if (lp->type == _FLOAT_ARR) {
       return createFloatNode(lp->value.farr.array[rp->value.ival]);
     }
     printf("ERROR: No es un arreglo entero o flotante\n");
+    return NULL;
+  }
+  case _RELOC: {
+    ASTNode *lp = executeAST(node->right);
+    if (lp == NULL) {
+      printf("ERROR: _RELOC\n");
+      return NULL;
+    }
+    update(node->left->value.identifier, lp);
+    return NULL;
+  }
+  case _RELOC_ARR: {
+    ASTNode *lp = node->right->left;
+    ASTNode *rp = node->right->right;
+    if (node->left == NULL) {
+      printf("ERROR: _RELOC_ARR\n");
+      return NULL;
+    }
+    if (node->left->type != _IDENTIFIER) {
+      printf("ERROR: Asignando sin nombre\n");
+      return NULL;
+    }
+    if (lp == NULL || rp == NULL) {
+      printf("ERROR: _RELOC_ARR\n");
+      return NULL;
+    }
+    update_arr(node->left->value.identifier, executeAST(rp), executeAST(lp));
     return NULL;
   }
   default:
@@ -613,7 +668,13 @@ char *get_enum_name(enum types type) {
   case _PRINT:
     return "PRINT";
   case _SVARR:
-    return "Val de la posicion del arr";
+    return "Elemento de un array";
+  case _RELOC:
+    return "Redeclaracion";
+  case _RELOC_ARR:
+    return "Redeclaracion elemnto array";
+  case _RELOC_ARR_AUX:
+    return "Auxiliar para redeclaracion elemnto array";
   default:
     return "enum_error";
   }

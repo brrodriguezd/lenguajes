@@ -24,7 +24,9 @@ enum types {
   _IF,
   _ELSE,
   _aINT,
+  _aINT_ARR,
   _aFLOAT,
+  _aFLOAT_ARR,
   _aCADENA,
   _PRINT,
 };
@@ -35,14 +37,16 @@ typedef struct ASTNode {
   enum types type;
   union {
     char *identifier;
-    struct ival {
+    int ival;
+    float fval;
+    struct iarr {
       int *array;
       int size;
-    } ival;
-    struct fval {
+    } iarr;
+    struct farr {
       float *array;
       int size;
-    } fval;
+    } farr;
     char *sval;
   } value;
   struct ASTNode *left;
@@ -51,8 +55,10 @@ typedef struct ASTNode {
 
 ASTNode *createNode(enum types type, ASTNode *left, ASTNode *right);
 ASTNode *createIdentifierNode(char *identifier);
-ASTNode *createIntNode(int *ival, int size);
-ASTNode *createFloatNode(float *fval, int size);
+ASTNode *createIntNode(int ival);
+ASTNode *createFloatNode(float fval);
+ASTNode *createIntArrNode(int *ival, int size);
+ASTNode *createFloatArrNode(float *fval, int size);
 ASTNode *createStringNode(char *sval);
 void printAST(ASTNode *node, int level);
 ASTNode *executeAST(ASTNode *node);

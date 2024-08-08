@@ -12,8 +12,8 @@ ENTERO      {DIGITO}+
 FLOTANTE    {DIGITO}+"."{DIGITO}+
 CADENA      \".+\"
 NOMBRE      {MINUSCULAS}+
-ARR_INT   \[{ENTERO}(,{ENTERO})*\]
-ARR_FLOAT \[{FLOTANTE}(,{FLOTANTE})*\]
+ARR_INT     \[{ENTERO}(,{ENTERO})*\]
+ARR_FLOAT   \[{FLOTANTE}(,{FLOTANTE})*\]
 
 %%
 {COMENTARIO} {/* NO HACER NADA */}
@@ -27,9 +27,7 @@ ARR_FLOAT \[{FLOTANTE}(,{FLOTANTE})*\]
 ")"         { return RP; }
 "if"        { return IF; }
 "else"      { return ELSE; }
-"int[]"     { return TYPE_INT_ARRAY; }
 "int"       { return TYPE_INT; }
-"float[]"   { return TYPE_FLOAT_ARRAY; }
 "float"     { return TYPE_FLOAT;}
 "string"    { return TYPE_CADENA; }
 "modelo"    { return TYPE_MODELO; }

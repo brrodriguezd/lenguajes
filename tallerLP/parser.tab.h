@@ -91,7 +91,8 @@ extern int yydebug;
     DIV = 286,                     /* DIV  */
     MOD = 287,                     /* MOD  */
     COMMA = 288,                   /* COMMA  */
-    PRINT = 289                    /* PRINT  */
+    SEMICOLON = 289,               /* SEMICOLON  */
+    PRINT = 290                    /* PRINT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -107,7 +108,7 @@ union YYSTYPE
     char *sval;
     ASTNode *ast;
 
-#line 111 "parser.tab.h"
+#line 112 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

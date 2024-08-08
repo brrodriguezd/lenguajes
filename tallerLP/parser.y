@@ -31,15 +31,16 @@ int yylex(void);
 %token LB RB LP RP LS RS
 %token EQ NE LE GE LT GT
 %token PLUS MINUS MUL DIV MOD
-%token COMMA
+%token COMMA SEMICOLON
 
+%nonassoc LS RS
 %left EQ NE LE GE LT GT
 %right PLUS MINUS
 %left MUL DIV MOD
 %token PRINT
 
 
-%type <ast> program stmt block expr declaracion array print
+%type <ast> program stmt block expr declaracion array print condicion
 
 %%
 
@@ -58,12 +59,12 @@ block:
     ;
 
 stmt:
-    WHILE expr LB block RB { $$ = createNode(_WHILE, $2, $4); }
-    | IF expr LB block RB { $$ = createNode(_IF, $2, $4); }
-    | IF expr LB block RB ELSE LB block RB { $$ = createNode(_IF, $2, createNode(_ELSE, $4, $8)); }
-    | expr
-    | declaracion
-    | print
+    WHILE condicion LB block RB { $$ = createNode(_WHILE, $2, $4); }
+    | IF condicion LB block RB { $$ = createNode(_IF, $2, $4); }
+    | IF condicion LB block RB ELSE LB block RB { $$ = createNode(_ELSE, createNode(_IF, $2, $4), $8); }
+    | expr SEMICOLON
+    | declaracion SEMICOLON
+    | print SEMICOLON
     ;
 
 expr:
@@ -73,11 +74,16 @@ expr:
     | INT { $$ = createIntNode($1); }
     | LP expr RP { $$ = $2; }
     | LS array RS { $$ = $2; }
+    | expr LS expr RS { $$ = createNode(_SVARR, $1, $3); }
     | expr PLUS expr { $$ = createNode(_PLUS, $1, $3); }
     | expr MINUS expr { $$ = createNode(_MINUS, $1, $3); }
     | expr MUL expr { $$ = createNode(_MUL, $1, $3); }
     | expr DIV expr { $$ = createNode(_DIV, $1, $3); }
     | expr MOD expr { $$ = createNode(_MOD, $1, $3); }
+    ;
+
+condicion:
+    LP condicion RP { $$ = $2; }
     | expr EQ expr { $$ = createNode(_EQ, $1, $3); }
     | expr NE expr { $$ = createNode(_NE, $1, $3); }
     | expr LE expr { $$ = createNode(_LE, $1, $3); }
@@ -85,7 +91,7 @@ expr:
     | expr LT expr { $$ = createNode(_LT, $1, $3); }
     | expr GT expr { $$ = createNode(_GT, $1, $3); }
     ;
-
+    
 array:
     array COMMA expr
     {
@@ -136,7 +142,6 @@ declaracion:
     | TYPE_CADENA IDENTIFIER ASSIGN expr { $$ = createNode(_aCADENA, createIdentifierNode($2), $4); }
     | TYPE_INT IDENTIFIER LS expr RS ASSIGN array { $$ = createNode(_aINT_ARR, createIdentifierNode($2), $4); }
     | TYPE_FLOAT IDENTIFIER LS expr RS ASSIGN array { $$ = createNode(_aFLOAT_ARR, createIdentifierNode($2), $4); }
-    
     ;
 
 print:

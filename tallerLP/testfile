@@ -1,2 +1,6 @@
-int var = 3
-print(var)
+int var = 3;
+if (var >= 3){
+    print(5);
+} else {
+    print(var);
+}

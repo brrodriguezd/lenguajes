@@ -34,6 +34,7 @@ ARR_FLOAT   \[{FLOTANTE}(,{FLOTANTE})*\]
 "print"     { return PRINT; }
 "["         { return LS; }
 "]"         { return RS; }
+";"         { return SEMICOLON; }
 
 {FLOTANTE}  { yylval.fval = atof(yytext); return FLOAT; }
 {ENTERO}    { yylval.ival = atoi(yytext); return INT; }

@@ -109,14 +109,12 @@ ASTNode *executeAST(ASTNode *node) {
   }
   switch (node->type) {
   case _IDENTIFIER: {
-    int *success;
-    ASTNode *result = malloc(sizeof(ASTNode));
-    *result = get(node->value.identifier, success);
-    if (*success == 1) {
-      return result;
+    ASTNode *result = get(node->value.identifier);
+    if (result == NULL) {
+      printf("ERROR: No se encontro la variable %s\n", node->value.identifier);
+      return NULL;
     }
-    printf("ERROR: No se encontro la variable %s", node->value.identifier);
-    return NULL;
+    return result;
   }
   case _INT:
     return node;
@@ -131,6 +129,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _PLUS: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type != _INT && operando2->type != _INT &&
         operando1->type != _FLOAT && operando2->type != _FLOAT) {
       printf("tipo no aceptado para la operacion +");
@@ -150,6 +154,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _MINUS: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type != _INT && operando2->type != _INT &&
         operando1->type != _FLOAT && operando2->type != _FLOAT) {
       printf("tipo no aceptado para la operacion -");
@@ -169,6 +179,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _MUL: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type == _CADENA && operando2->type == _CADENA) {
       char *respuesta = strdup(operando1->value.sval);
       strcat(respuesta, operando2->value.sval);
@@ -193,6 +209,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _DIV: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type != _INT && operando2->type != _INT &&
         operando1->type != _FLOAT && operando2->type != _FLOAT) {
       printf("tipo no aceptado para la operacion /");
@@ -212,6 +234,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _MOD: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type != _INT && operando2->type != _INT) {
       printf("tipo no aceptado para la operacion módulo");
       return NULL;
@@ -221,6 +249,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _GT: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type != _INT && operando2->type != _INT &&
         operando1->type != _FLOAT && operando2->type != _FLOAT) {
       printf("tipo no aceptado para la operacion >");
@@ -244,6 +278,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _LT: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type != _INT && operando2->type != _INT &&
         operando1->type != _FLOAT && operando2->type != _FLOAT) {
       printf("tipo no aceptado para la operacion <");
@@ -267,6 +307,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _GE: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type != _INT && operando2->type != _INT &&
         operando1->type != _FLOAT && operando2->type != _FLOAT) {
       printf("tipo no aceptado para la operacion >=");
@@ -290,6 +336,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _LE: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type != _INT && operando2->type != _INT &&
         operando1->type != _FLOAT && operando2->type != _FLOAT) {
       printf("tipo no aceptado para la operacion <=");
@@ -313,6 +365,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _NE: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type == _CADENA && operando2->type == _CADENA) {
       return (createIntNode(
           (operando1->value.sval != operando2->value.sval) ? 1 : 0));
@@ -340,6 +398,12 @@ ASTNode *executeAST(ASTNode *node) {
   case _EQ: {
     ASTNode *operando1 = executeAST(node->left);
     ASTNode *operando2 = executeAST(node->right);
+    if (operando1 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
+    if (operando2 == NULL) {
+      printf("ERROR: OPERANDOS");
+    }
     if (operando1->type == _CADENA && operando2->type == _CADENA) {
       return (createIntNode(
           (operando1->value.sval == operando2->value.sval) ? 1 : 0));
@@ -369,66 +433,125 @@ ASTNode *executeAST(ASTNode *node) {
     executeAST(node->right);
     return NULL;
   case _WHILE: {
+    ASTNode *lp = executeAST(node->left);
+    if (lp == NULL) {
+      printf("ERROR: _IF\n");
+      return NULL;
+    }
     while (executeAST(node->left)->value.ival) {
       executeAST(node->right);
     }
     return NULL;
   }
-  case _IF:
-    if (executeAST(node->left)->value.ival == 1) {
-      if (node->right->type == _ELSE) {
-        executeAST(node->right->left);
-      }
-      executeAST((node->left)->left);
-    } else if (node->right->type == _ELSE) {
-      executeAST(node->right->right);
+  case _IF: {
+    ASTNode *lp = executeAST(node->left);
+    if (lp == NULL) {
+      printf("ERROR: _IF\n");
+      return NULL;
+    }
+    if (lp->value.ival == 1) {
+      /*ESTO RETORNARIA NULL*/
+      return executeAST(node->right);
+    }
+    return node;
+  }
+  case _ELSE: {
+    ASTNode *lp = executeAST(node->left);
+    /*SI NO ES NULL EL IF FUE FALSO*/
+    if (lp) {
+      return executeAST(node->right);
     }
     return NULL;
+  }
   case _aINT: {
-    ASTNode *rs = executeAST(node->right);
-    if (rs->type != _INT) {
-      printf("ERROR: Asignacion de tipo %s en INT", get_enum_name(rs->type));
+    ASTNode *lp = executeAST(node->right);
+    if (lp == NULL) {
+      printf("ERROR: _aINT\n");
+      return NULL;
     }
-    insert(node->left->value.identifier, *(rs));
+    if (lp->type != _INT) {
+      printf("ERROR: Asignacion de tipo %s en INT\n", get_enum_name(lp->type));
+    }
+    insert(node->left->value.identifier, lp);
     return NULL;
   }
   case _aFLOAT: {
-    ASTNode *rs = executeAST(node->right);
-    if (rs->type != _FLOAT) {
-      printf("ERROR: Asignacion de tipo %s en INT", get_enum_name(rs->type));
+    ASTNode *lp = executeAST(node->right);
+    if (lp == NULL) {
+      printf("ERROR: _aFLOAT\n");
+      return NULL;
     }
-    insert(node->left->value.identifier, *(rs));
+    if (lp->type != _FLOAT) {
+      printf("ERROR: Asignacion de tipo %s en FLOAT\n",
+             get_enum_name(lp->type));
+    }
+    insert(node->left->value.identifier, lp);
     return NULL;
   }
   case _aCADENA: {
-    ASTNode *rs = executeAST(node->right);
-    if (rs->type != _CADENA) {
-      printf("ERROR: Asignacion de tipo %s en INT", get_enum_name(rs->type));
+    ASTNode *lp = executeAST(node->right);
+    if (lp == NULL) {
+      printf("ERROR: _aCADENA\n");
+      return NULL;
     }
-    insert(node->left->value.identifier, *(rs));
+    if (lp->type != _CADENA) {
+      printf("ERROR: Asignacion de tipo %s en CADENA\n",
+             get_enum_name(lp->type));
+    }
+    insert(node->left->value.identifier, lp);
     return NULL;
   }
   case _PRINT: {
-    ASTNode *rs = executeAST(node->left);
-    if (rs->type == _INT) {
-      printf("%d", rs->value.ival);
-    } else if (rs->type == _FLOAT) {
-      printf("%f", rs->value.fval);
-    } else if (rs->type == _CADENA) {
-      printf("%s", rs->value.sval);
-    } else if (rs->type == _INT_ARR) {
-      for (int i = 0; i < rs->value.iarr.size; i++) {
-        printf("%d", rs->value.iarr.array[i]);
+    ASTNode *lp = executeAST(node->left);
+    if (lp == NULL) {
+      printf("ERROR: No es una expresión imprimible\n");
+      return NULL;
+    }
+    if (lp->type == _INT) {
+      printf("%d\n", lp->value.ival);
+    } else if (lp->type == _FLOAT) {
+      printf("%f\n", lp->value.fval);
+    } else if (lp->type == _CADENA) {
+      printf("%s\n", lp->value.sval);
+    } else if (lp->type == _INT_ARR) {
+      printf("[%d", lp->value.iarr.array[0]);
+      for (int i = 1; i < lp->value.iarr.size; i++) {
+        printf(",%d", lp->value.iarr.array[i]);
       }
-    } else if (rs->type == _FLOAT_ARR) {
-      for (int i = 0; i < rs->value.farr.size; i++) {
-        printf("%f", rs->value.farr.array[i]);
+      printf("]\n");
+    } else if (lp->type == _FLOAT_ARR) {
+      printf("[%f", lp->value.farr.array[0]);
+      for (int i = 1; i < lp->value.farr.size; i++) {
+        printf(",%f", lp->value.farr.array[i]);
       }
+      printf("]\n");
+    } else {
+      printf("ERROR: No es una expresión imprimible\n");
     }
     return NULL;
   }
+  case _SVARR: {
+    ASTNode *lp = executeAST(node->left);
+    ASTNode *rp = executeAST(node->right);
+    if (rp == NULL || lp == NULL) {
+      printf("ERROR: _SVARR\n");
+      return NULL;
+    }
+    if (rp->type != _INT) {
+      printf("ERROR: El índice no es entero\n");
+      return NULL;
+    }
+    if (lp->type == _INT_ARR) {
+      return createFloatNode(lp->value.iarr.array[rp->value.ival]);
+    }
+    if (lp->type == _FLOAT_ARR) {
+      return createFloatNode(lp->value.farr.array[rp->value.ival]);
+    }
+    printf("ERROR: No es un arreglo entero o flotante\n");
+    return NULL;
+  }
   default:
-    printf("ERROR: Nodo AST no reconocido %s", get_enum_name(node->type));
+    printf("ERROR: Nodo AST no reconocido %s\n", get_enum_name(node->type));
     return NULL;
   }
 }
@@ -489,6 +612,8 @@ char *get_enum_name(enum types type) {
     return "Asignacion cadena";
   case _PRINT:
     return "PRINT";
+  case _SVARR:
+    return "Val de la posicion del arr";
   default:
     return "enum_error";
   }

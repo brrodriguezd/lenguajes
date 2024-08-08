@@ -29,6 +29,8 @@ enum types {
   _aFLOAT_ARR,
   _aCADENA,
   _PRINT,
+  /*SINGLE VALUE FROM ARRAY*/
+  _SVARR
 };
 
 char *get_enum_name(enum types type);

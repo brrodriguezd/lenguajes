@@ -5,7 +5,7 @@
 #include "ast.h"
 
 int getIndex(char *key);
-void insert(char key[], ASTNode value);
-ASTNode get(char key[], int *success);
+void insert(char key[], ASTNode *value);
+ASTNode *get(char key[]);
 
 #endif

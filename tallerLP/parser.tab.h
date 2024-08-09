@@ -64,35 +64,39 @@ extern int yydebug;
     CADENA = 259,                  /* CADENA  */
     INT = 260,                     /* INT  */
     FLOAT = 261,                   /* FLOAT  */
-    ASSIGN = 262,                  /* ASSIGN  */
-    TYPE_INT = 263,                /* TYPE_INT  */
-    TYPE_FLOAT = 264,              /* TYPE_FLOAT  */
-    TYPE_CADENA = 265,             /* TYPE_CADENA  */
-    TYPE_MODELO = 266,             /* TYPE_MODELO  */
-    WHILE = 267,                   /* WHILE  */
-    IF = 268,                      /* IF  */
-    ELSE = 269,                    /* ELSE  */
-    THEN = 270,                    /* THEN  */
-    LB = 271,                      /* LB  */
-    RB = 272,                      /* RB  */
-    LP = 273,                      /* LP  */
-    RP = 274,                      /* RP  */
-    LS = 275,                      /* LS  */
-    RS = 276,                      /* RS  */
-    EQ = 277,                      /* EQ  */
-    NE = 278,                      /* NE  */
-    LE = 279,                      /* LE  */
-    GE = 280,                      /* GE  */
-    LT = 281,                      /* LT  */
-    GT = 282,                      /* GT  */
-    PLUS = 283,                    /* PLUS  */
-    MINUS = 284,                   /* MINUS  */
-    MUL = 285,                     /* MUL  */
-    DIV = 286,                     /* DIV  */
-    MOD = 287,                     /* MOD  */
-    COMMA = 288,                   /* COMMA  */
-    SEMICOLON = 289,               /* SEMICOLON  */
-    PRINT = 290                    /* PRINT  */
+    ALFABETO = 262,                /* ALFABETO  */
+    ASSIGN = 263,                  /* ASSIGN  */
+    TYPE_INT = 264,                /* TYPE_INT  */
+    TYPE_FLOAT = 265,              /* TYPE_FLOAT  */
+    TYPE_CADENA = 266,             /* TYPE_CADENA  */
+    TYPE_MODELO = 267,             /* TYPE_MODELO  */
+    TYPE_CAD_MULT = 268,           /* TYPE_CAD_MULT  */
+    WHILE = 269,                   /* WHILE  */
+    IF = 270,                      /* IF  */
+    ELSE = 271,                    /* ELSE  */
+    THEN = 272,                    /* THEN  */
+    LB = 273,                      /* LB  */
+    RB = 274,                      /* RB  */
+    LP = 275,                      /* LP  */
+    RP = 276,                      /* RP  */
+    LS = 277,                      /* LS  */
+    RS = 278,                      /* RS  */
+    EQ = 279,                      /* EQ  */
+    NE = 280,                      /* NE  */
+    LE = 281,                      /* LE  */
+    GE = 282,                      /* GE  */
+    LT = 283,                      /* LT  */
+    GT = 284,                      /* GT  */
+    PLUS = 285,                    /* PLUS  */
+    MINUS = 286,                   /* MINUS  */
+    MUL = 287,                     /* MUL  */
+    DIV = 288,                     /* DIV  */
+    MOD = 289,                     /* MOD  */
+    SIZE = 290,                    /* SIZE  */
+    CAT = 291,                     /* CAT  */
+    COMMA = 292,                   /* COMMA  */
+    SEMICOLON = 293,               /* SEMICOLON  */
+    PRINT = 294                    /* PRINT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -107,8 +111,9 @@ union YYSTYPE
     float fval;
     char *sval;
     ASTNode *ast;
+    char *cval; //este es de un solo caracter
 
-#line 112 "parser.tab.h"
+#line 117 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

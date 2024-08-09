@@ -1,0 +1,69 @@
+ARBOL:
+BLOQUE
+	Asignacion int
+		IDENTIFIER: var
+		INT: 3
+	BLOQUE
+		IF
+			>=
+				IDENTIFIER: var
+				INT: 5
+			BLOQUE
+				PRINT
+					INT: 5
+		BLOQUE
+			Asignacion arreglo int
+				IDENTIFIER: iarr
+				ARREGLO INT[2]: [1, 3]
+			BLOQUE
+				Asignacion arreglo float
+					IDENTIFIER: farr
+					ARREGLO FLOAT[3]: [3.000000, 4.300000, 5.000000]
+				BLOQUE
+					PRINT
+						Elemento de un array
+							IDENTIFIER: iarr
+							INT: 1
+					BLOQUE
+						PRINT
+							IDENTIFIER: farr
+						BLOQUE
+							Redeclaracion elemnto array
+								IDENTIFIER: iarr
+								Auxiliar para redeclaracion elemnto array
+									INT: 1
+									INT: 5
+							BLOQUE
+								PRINT
+									Elemento de un array
+										IDENTIFIER: iarr
+										INT: 1
+								BLOQUE
+									Redeclaracion
+										IDENTIFIER: iarr
+										ARREGLO INT[3]: [1, 5, 4]
+									BLOQUE
+										PRINT
+											IDENTIFIER: iarr
+										BLOQUE
+											WHILE
+												<=
+													IDENTIFIER: var
+													INT: 5
+												BLOQUE
+													PRINT
+														IDENTIFIER: var
+													BLOQUE
+														Redeclaracion
+															IDENTIFIER: var
+															+
+																IDENTIFIER: var
+																INT: 1
+RESULTADOS:
+3
+[3.000000,4.300000,5.000000]
+5
+[1,5,4]
+3
+4
+5

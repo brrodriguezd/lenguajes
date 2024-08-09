@@ -1,5 +1,6 @@
 %{
 #include "parser.tab.h"
+char *quitar_comillas(char *str);
 %}
 
 MINUSCULAS  [a-z]
@@ -10,7 +11,7 @@ BLOQUEC     "/*"(.*\n)*"*/"\n
 ESPACIOS    [ \t\r\n]+
 ENTERO      {DIGITO}+
 FLOTANTE    {DIGITO}+"."{DIGITO}+
-CADENA      \".+\"
+CADENA      \"{MINUSCULAS}+\"
 NOMBRE      {MINUSCULAS}+
 ARR_INT     \[{ENTERO}(,{ENTERO})*\]
 ARR_FLOAT   \[{FLOTANTE}(,{FLOTANTE})*\]
@@ -29,16 +30,20 @@ ARR_FLOAT   \[{FLOTANTE}(,{FLOTANTE})*\]
 "else"      { return ELSE; }
 "int"       { return TYPE_INT; }
 "float"     { return TYPE_FLOAT;}
-"string"    { return TYPE_CADENA; }
+"str"       { return TYPE_CADENA; }
 "modelo"    { return TYPE_MODELO; }
 "print"     { return PRINT; }
 "["         { return LS; }
 "]"         { return RS; }
 ";"         { return SEMICOLON; }
+"size"      { return SIZE; }
+"categoria" { return CAT; }
+"str_mult"  { return TYPE_CAD_MULT; }
 
+{ALFABETO}  { yylval.cval = strdup(yytext); return ALFABETO; }
 {FLOTANTE}  { yylval.fval = atof(yytext); return FLOAT; }
 {ENTERO}    { yylval.ival = atoi(yytext); return INT; }
-{CADENA}    { yylval.sval = strdup(yytext); return CADENA; }
+{CADENA}    { yylval.sval = quitar_comillas(yytext); return CADENA; }
 {NOMBRE}    { yylval.sval = strdup(yytext); return IDENTIFIER; }
 
 ","         { return COMMA; }
@@ -59,4 +64,11 @@ ARR_FLOAT   \[{FLOTANTE}(,{FLOTANTE})*\]
 
 int yywrap() {
     return 1;
+}
+
+char * quitar_comillas(char *str){
+    int len = strlen(str);
+    char *new_str = str+1;
+    new_str[len-2] = '\0';
+    return strdup(new_str);
 }

@@ -21,22 +21,24 @@ int yylex(void);
     float fval;
     char *sval;
     ASTNode *ast;
+    char *cval; //este es de un solo caracter
 }
 
 %token <sval> IDENTIFIER CADENA
 %token <ival> INT
 %token <fval> FLOAT
-%token ASSIGN TYPE_INT TYPE_FLOAT TYPE_CADENA TYPE_MODELO
+%token <cval> ALFABETO
+%token ASSIGN TYPE_INT TYPE_FLOAT TYPE_CADENA TYPE_MODELO  TYPE_CAD_MULT
 %token WHILE IF ELSE THEN
 %token LB RB LP RP LS RS
 %token EQ NE LE GE LT GT
-%token PLUS MINUS MUL DIV MOD
+%token PLUS MINUS MUL DIV MOD SIZE CAT
 %token COMMA SEMICOLON
 
 %right LS
 %left EQ NE LE GE LT GT
-%right PLUS MINUS
-%left MUL DIV MOD
+%right PLUS MINUS CAT
+%left MUL DIV MOD SIZE 
 %token PRINT
 
 
@@ -73,6 +75,7 @@ expr:
     | IDENTIFIER { $$ = createIdentifierNode($1); }
     | FLOAT { $$ = createFloatNode($1); }
     | INT { $$ = createIntNode($1); }
+    | ALFABETO { $$ = createIdentifierNode($1); }
     | LP expr RP { $$ = $2; }
     | LS array RS { $$ = $2; }
     | expr LS expr RS { $$ = createNode(_SVARR, $1, $3); }
@@ -81,6 +84,8 @@ expr:
     | expr MUL expr { $$ = createNode(_MUL, $1, $3); }
     | expr DIV expr { $$ = createNode(_DIV, $1, $3); }
     | expr MOD expr { $$ = createNode(_MOD, $1, $3); }
+    | expr SIZE { $$ = createNode(_SIZE, $1, NULL); }
+    | expr CAT { $$ = createNode(_CAT, $1, NULL); }
     ;
 
 condicion:
@@ -130,6 +135,11 @@ array:
             float *var = malloc(sizeof(float));
             *var = $1->value.fval;
             $$ = createFloatArrNode(var,1);
+        }else if ($1->type == _FLOAT_ARR){
+            farray *var = malloc(sizeof(farray));
+            *var.array = $1->value.farray;
+            $$ = createFloatArrNode(var,1);
+
         }else{
             printf("No se permiten arreglos del tipo %s", get_enum_name($1->type));
             exit(EXIT_FAILURE);
@@ -148,6 +158,13 @@ declaracion:
     | TYPE_CADENA IDENTIFIER ASSIGN expr { $$ = createNode(_aCADENA, createIdentifierNode($2), $4); }
     | TYPE_INT MUL IDENTIFIER ASSIGN expr { $$ = createNode(_aINT_ARR, createIdentifierNode($3), $5); }
     | TYPE_FLOAT MUL IDENTIFIER ASSIGN expr { $$ = createNode(_aFLOAT_ARR,createIdentifierNode($3), $5); }
+    | TYPE_CAD_MULT IDENTIFIER ASSIGN LB expr COMMA expr COMMA expr RB 
+    { $$ = createNode(_aCADE_MULTI,createIdentifierNode($2), createNode(_aCADE_MULTI, $5, createNode(_aCADE_MULTI, $7, $9))); }
+    | TYPE_FLOAT MUL MUL IDENTIFIER ASSIGN expr { $$ = createNode(_aFLOAT_MAT,createIdentifierNode($4), $6); }
+    | TYPE_MODELO IDENTIFIER ASSIGN LB expr COMMA expr COMMA expr COMMA expr COMMA expr COMMA expr RB 
+    { $$ = createNode(_aMODELO,createIdentifierNode($2), createNode(_aMODELO, $5, createNode(_aMODELO, $7, createNode(_aMODELO, $9, createNode(_aMODELO, $11, 
+        createNode(_aMODELO, $13, $15)))))); }
+    | ALFABETO ASSIGN expr { $$ = createNode(_aALFABETO, createIdentifierNode($1), $3); }
     ;
 
 print:

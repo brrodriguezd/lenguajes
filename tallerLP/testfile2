@@ -1,0 +1,26 @@
+// D e c l a r a c i o n e s
+int x = 10;
+float y = 5.5;
+int ∗ arr = [1, 2, 3];
+// Bucle
+while (x > 0) {
+    x = x − 1;
+    print(x);
+}
+// C o n d i c i o n a l
+if (y > 2 . 5) {
+    print(”esmayor”);
+} else {
+    print(”esmenoroigual”);
+}
+/∗ bloque de comentarios
+bloque de comentarios 
+bloque de comentarios
+∗/
+// O p e r a c i o n e s con a r r e g l o s
+int first = arr[0];
+print(first);
+int sum = first + arr[1];
+print(sum);
+str cadena = ”caaaaaadeeeennnaaaa” ∗ ”uuuuu”;
+print(cadena categoria);

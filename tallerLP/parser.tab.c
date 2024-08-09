@@ -551,8 +551,8 @@ static const yytype_uint8 yyrline[] =
        0,    50,    50,    59,    60,    64,    65,    66,    67,    68,
       69,    70,    74,    75,    76,    77,    78,    79,    80,    81,
       82,    83,    84,    85,    86,    87,    88,    92,    93,    94,
-      95,    96,    97,    98,   102,   128,   146,   147,   151,   152,
-     153,   154,   155,   156,   158,   159,   162,   166
+      95,    96,    97,    98,   102,   141,   166,   167,   171,   172,
+     173,   174,   175,   176,   178,   179,   182,   186
 };
 #endif
 
@@ -606,11 +606,11 @@ static const yytype_int16 yypact[] =
      -12,   -12,   -12,   -12,   -12,   -12,   340,   340,    81,    45,
       81,    46,    52,    81,    47,    48,   153,    35,    81,    81,
       81,    81,    81,    81,    81,   123,   123,   -12,   -12,    81,
-     176,   318,   184,   184,   -12,   -12,   -12,   340,    81,   340,
-      81,    56,   340,    81,    81,   -12,   333,   340,   340,   340,
-     340,   340,   340,    50,    51,   340,   -12,    63,   340,   340,
-      81,   191,   207,   -12,   -12,    58,    81,   340,    81,    81,
-      49,   340,   223,   239,   123,    81,    81,    57,   255,    59,
+     176,   318,   340,   340,    42,    42,    42,   340,    81,   340,
+      81,    61,   340,    81,    81,   -12,   333,   340,   340,   340,
+     340,   340,   340,    51,    55,   340,   -12,    63,   340,   340,
+      81,   191,   207,   -12,   -12,    60,    81,   340,    81,    81,
+      49,   340,   223,   239,   123,    81,    81,    56,   255,    59,
      -12,    81,   -12,   271,    81,   287,    81,   120,   -12
 };
 
@@ -658,8 +658,8 @@ static const yytype_uint8 yytable[] =
       80,    79,    58,    81,    82,    83,    84,    85,    86,    26,
       28,    55,    59,    62,    60,    63,    64,    87,    65,    89,
       75,    76,    92,    88,    90,    91,    95,    96,    97,    98,
-      99,   100,   101,   102,   110,    93,    94,   124,   105,   114,
-     115,   116,   103,   104,   120,     0,   130,   108,   132,   109,
+      99,   100,   101,   102,    68,    93,    94,   124,   105,   110,
+     114,   116,   103,   104,   115,   130,   120,   108,   132,   109,
        0,    68,   111,   112,    32,     2,     3,     4,    33,    45,
       46,    47,    48,    49,    50,    51,     0,     0,     0,   117,
        0,    13,     0,    14,     0,   121,     0,   122,   123,     0,
@@ -673,8 +673,8 @@ static const yytype_uint8 yytable[] =
       72,    73,    74,    45,    46,    47,    48,    49,    50,    51,
       77,    68,     0,     0,     0,     0,     0,   106,    68,    45,
       46,    47,    48,    49,    50,    51,    45,    46,    47,    48,
-      49,    50,    51,    68,    45,    46,    47,    48,    49,    50,
-      51,    45,    46,    47,    48,    49,    50,    51,   118,    68,
+      49,    50,    51,    68,     0,     0,     0,     0,     0,     0,
+       0,    45,    46,    47,    48,    49,    50,    51,   118,    68,
        0,     0,     0,     0,     0,     0,     0,    45,    46,    47,
       48,    49,    50,    51,   119,    68,     0,     0,     0,     0,
        0,     0,     0,    45,    46,    47,    48,    49,    50,    51,
@@ -700,8 +700,8 @@ static const yytype_int16 yycheck[] =
       41,    37,     8,    44,    45,    46,    47,    48,    49,    32,
       32,    38,     3,    32,     8,     8,     8,    58,     8,    60,
       18,    18,    63,     8,     8,     3,    21,    68,    69,    70,
-      71,    72,    73,    74,     8,    18,    18,    18,    79,    19,
-      19,     8,    75,    76,    16,    -1,    19,    88,    19,    90,
+      71,    72,    73,    74,    22,    18,    18,    18,    79,     8,
+      19,     8,    75,    76,    19,    19,    16,    88,    19,    90,
       -1,    22,    93,    94,     3,     4,     5,     6,     7,    30,
       31,    32,    33,    34,    35,    36,    -1,    -1,    -1,   110,
       -1,    20,    -1,    22,    -1,   116,    -1,   118,   119,    -1,
@@ -715,8 +715,8 @@ static const yytype_int16 yycheck[] =
       27,    28,    29,    30,    31,    32,    33,    34,    35,    36,
       21,    22,    -1,    -1,    -1,    -1,    -1,    21,    22,    30,
       31,    32,    33,    34,    35,    36,    30,    31,    32,    33,
-      34,    35,    36,    22,    30,    31,    32,    33,    34,    35,
-      36,    30,    31,    32,    33,    34,    35,    36,    37,    22,
+      34,    35,    36,    22,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    30,    31,    32,    33,    34,    35,    36,    37,    22,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    30,    31,    32,
       33,    34,    35,    36,    37,    22,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    30,    31,    32,    33,    34,    35,    36,
@@ -1429,16 +1429,29 @@ yyreduce:
             }
             val->value.farr.array[val->value.farr.size - 1] = (yyvsp[0].ast)->value.fval;
             (yyval.ast) = val;
+        }
+        else if((yyvsp[-2].ast)->type == _FLOAT_MAT && (yyvsp[0].ast)->type == _FLOAT_ARR){
+            ASTNode *val = (yyvsp[-2].ast);
+            void *result = realloc(val->value.fmat.array, (++val->value.fmat.n)* sizeof(farray*));
+            if (result == NULL){
+                printf("Espacio lleno");
+                exit(EXIT_FAILURE);
+            }
+            farray *inside = malloc(sizeof(farray));
+            inside->array =  (yyvsp[0].ast)->value.farr.array;
+            inside->size =  (yyvsp[0].ast)->value.farr.size;
+            val->value.fmat.array[val->value.fmat.n - 1] = inside;
+            (yyval.ast) = val;
         }else{
             printf("Los arreglos deben ser del mismo tipo");
             exit(EXIT_FAILURE);
         }
     }
-#line 1438 "parser.tab.c"
+#line 1451 "parser.tab.c"
     break;
 
   case 35: /* array: expr  */
-#line 129 "parser.y"
+#line 142 "parser.y"
     {
         if ((yyvsp[0].ast)->type == _INT){
             int *var = malloc(sizeof(int));
@@ -1448,91 +1461,98 @@ yyreduce:
             float *var = malloc(sizeof(float));
             *var = (yyvsp[0].ast)->value.fval;
             (yyval.ast) = createFloatArrNode(var,1);
+        }else if ((yyvsp[0].ast)->type == _FLOAT_ARR){
+            farray **var = malloc(sizeof(farray*));
+            farray *inside = malloc(sizeof(farray));
+            inside->array =  (yyvsp[0].ast)->value.farr.array;
+            inside->size =  (yyvsp[0].ast)->value.farr.size;
+            *var = inside;
+            (yyval.ast) = createFloatMatNode(var,1,1);
         }else{
             printf("No se permiten arreglos del tipo %s", get_enum_name((yyvsp[0].ast)->type));
             exit(EXIT_FAILURE);
         }
     }
-#line 1457 "parser.tab.c"
+#line 1477 "parser.tab.c"
     break;
 
   case 36: /* reassign: IDENTIFIER ASSIGN expr  */
-#line 146 "parser.y"
+#line 166 "parser.y"
                            { (yyval.ast) = createNode(_RELOC, createIdentifierNode((yyvsp[-2].sval)), (yyvsp[0].ast)); }
-#line 1463 "parser.tab.c"
+#line 1483 "parser.tab.c"
     break;
 
   case 37: /* reassign: expr LS expr RS ASSIGN expr  */
-#line 147 "parser.y"
+#line 167 "parser.y"
                                   { (yyval.ast) = createNode(_RELOC_ARR, (yyvsp[-5].ast), createNode(_RELOC_ARR_AUX, (yyvsp[-3].ast), (yyvsp[0].ast))); }
-#line 1469 "parser.tab.c"
+#line 1489 "parser.tab.c"
     break;
 
   case 38: /* declaracion: TYPE_INT IDENTIFIER ASSIGN expr  */
-#line 151 "parser.y"
+#line 171 "parser.y"
                                     { (yyval.ast) = createNode(_aINT, createIdentifierNode((yyvsp[-2].sval)), (yyvsp[0].ast)); }
-#line 1475 "parser.tab.c"
+#line 1495 "parser.tab.c"
     break;
 
   case 39: /* declaracion: TYPE_FLOAT IDENTIFIER ASSIGN expr  */
-#line 152 "parser.y"
+#line 172 "parser.y"
                                         { (yyval.ast) = createNode(_aFLOAT, createIdentifierNode((yyvsp[-2].sval)), (yyvsp[0].ast)); }
-#line 1481 "parser.tab.c"
+#line 1501 "parser.tab.c"
     break;
 
   case 40: /* declaracion: TYPE_CADENA IDENTIFIER ASSIGN expr  */
-#line 153 "parser.y"
+#line 173 "parser.y"
                                          { (yyval.ast) = createNode(_aCADENA, createIdentifierNode((yyvsp[-2].sval)), (yyvsp[0].ast)); }
-#line 1487 "parser.tab.c"
+#line 1507 "parser.tab.c"
     break;
 
   case 41: /* declaracion: TYPE_INT MUL IDENTIFIER ASSIGN expr  */
-#line 154 "parser.y"
+#line 174 "parser.y"
                                           { (yyval.ast) = createNode(_aINT_ARR, createIdentifierNode((yyvsp[-2].sval)), (yyvsp[0].ast)); }
-#line 1493 "parser.tab.c"
+#line 1513 "parser.tab.c"
     break;
 
   case 42: /* declaracion: TYPE_FLOAT MUL IDENTIFIER ASSIGN expr  */
-#line 155 "parser.y"
+#line 175 "parser.y"
                                             { (yyval.ast) = createNode(_aFLOAT_ARR,createIdentifierNode((yyvsp[-2].sval)), (yyvsp[0].ast)); }
-#line 1499 "parser.tab.c"
+#line 1519 "parser.tab.c"
     break;
 
   case 43: /* declaracion: TYPE_CAD_MULT IDENTIFIER ASSIGN LB expr COMMA expr COMMA expr RB  */
-#line 157 "parser.y"
+#line 177 "parser.y"
     { (yyval.ast) = createNode(_aCADE_MULTI,createIdentifierNode((yyvsp[-8].sval)), createNode(_aCADE_MULTI, (yyvsp[-5].ast), createNode(_aCADE_MULTI, (yyvsp[-3].ast), (yyvsp[-1].ast)))); }
-#line 1505 "parser.tab.c"
+#line 1525 "parser.tab.c"
     break;
 
   case 44: /* declaracion: TYPE_FLOAT MUL MUL IDENTIFIER ASSIGN expr  */
-#line 158 "parser.y"
+#line 178 "parser.y"
                                                 { (yyval.ast) = createNode(_aFLOAT_MAT,createIdentifierNode((yyvsp[-2].sval)), (yyvsp[0].ast)); }
-#line 1511 "parser.tab.c"
+#line 1531 "parser.tab.c"
     break;
 
   case 45: /* declaracion: TYPE_MODELO IDENTIFIER ASSIGN LB expr COMMA expr COMMA expr COMMA expr COMMA expr COMMA expr RB  */
-#line 160 "parser.y"
+#line 180 "parser.y"
     { (yyval.ast) = createNode(_aMODELO,createIdentifierNode((yyvsp[-14].sval)), createNode(_aMODELO, (yyvsp[-11].ast), createNode(_aMODELO, (yyvsp[-9].ast), createNode(_aMODELO, (yyvsp[-7].ast), createNode(_aMODELO, (yyvsp[-5].ast), 
         createNode(_aMODELO, (yyvsp[-3].ast), (yyvsp[-1].ast))))))); }
-#line 1518 "parser.tab.c"
+#line 1538 "parser.tab.c"
     break;
 
   case 46: /* declaracion: ALFABETO ASSIGN expr  */
-#line 162 "parser.y"
+#line 182 "parser.y"
                            { (yyval.ast) = createNode(_aALFABETO, createIdentifierNode((yyvsp[-2].cval)), (yyvsp[0].ast)); }
-#line 1524 "parser.tab.c"
+#line 1544 "parser.tab.c"
     break;
 
   case 47: /* print: PRINT LP expr RP  */
-#line 166 "parser.y"
+#line 186 "parser.y"
                      {
         (yyval.ast) = createNode(_PRINT, (yyvsp[-1].ast), NULL); 
     }
-#line 1532 "parser.tab.c"
+#line 1552 "parser.tab.c"
     break;
 
 
-#line 1536 "parser.tab.c"
+#line 1556 "parser.tab.c"
 
       default: break;
     }
@@ -1725,7 +1745,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 169 "parser.y"
+#line 189 "parser.y"
 
 
 int main(int argc, char **argv) {

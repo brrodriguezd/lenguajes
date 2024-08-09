@@ -61,7 +61,7 @@ ASTNode *createFloatArrNode(float *fval, int size) {
 
 ASTNode *createFloatMatNode(farray **farr, int n, int m) {
   ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
-  node->type = _FLOAT_ARR;
+  node->type = _FLOAT_MAT;
   node->value.fmat.array = farr;
   node->value.fmat.n = n;
   node->value.fmat.m = m;
@@ -154,6 +154,19 @@ void printAST(ASTNode *node, int level) {
       printf(", %f", node->value.farr.array[i]);
     }
     printf("]\n");
+  } else if (node->type == _FLOAT_MAT) {
+    printf("%s[%d][%d]: [", get_enum_name(node->type), node->value.fmat.n,
+           node->value.fmat.m);
+    printAST(createFloatArrNode(node->value.fmat.array[0][0].array,
+                                node->value.fmat.array[0][0].size),
+             0);
+    for (int i = 1; i < node->value.fmat.n; i++) {
+      for (int j = 0; j < node->value.fmat.m; j++) {
+        printAST(createFloatArrNode(node->value.fmat.array[i][j].array,
+                                    node->value.fmat.array[i][j].size),
+                 level + 1);
+      }
+    }
   } else if (node->type == _CADENA) {
     printf("%s: %s\n", get_enum_name(node->type), node->value.sval);
   } else if (node->type == _ALFABETO) {
@@ -250,8 +263,16 @@ ASTNode *executeAST(ASTNode *node) {
       printf("ERROR: OPERANDOS");
     }
     if (operando1->type == _CADENA && operando2->type == _CADENA) {
-      char *respuesta = strdup(operando1->value.sval);
-      strcat(respuesta, operando2->value.sval);
+      int size = strlen(operando1->value.sval) + strlen(operando2->value.sval);
+      char respuesta[size];
+      int cont = 0;
+      for (char *i = operando1->value.sval; *i != '\0'; i++) {
+        respuesta[cont++] = *i;
+      }
+      for (char *i = operando2->value.sval; *i != '\0'; i++) {
+        respuesta[cont++] = *i;
+      }
+      respuesta[cont] = '\0';
       return createStringNode(respuesta);
     }
     if (operando1->type != _INT && operando2->type != _INT &&
@@ -766,6 +787,8 @@ ASTNode *executeAST(ASTNode *node) {
     return NULL;
   }
   case _FLOAT_MAT:
+    return node;
+  case _aFLOAT_MAT:
     return node;
   case _MODELO:
     return node;

@@ -35,10 +35,10 @@ int yylex(void);
 %token PLUS MINUS MUL DIV MOD SIZE CAT
 %token COMMA SEMICOLON
 
-%right LS
 %left EQ NE LE GE LT GT
 %right PLUS MINUS CAT
 %left MUL DIV MOD SIZE 
+%right LS
 %token PRINT
 
 
@@ -120,6 +120,19 @@ array:
             }
             val->value.farr.array[val->value.farr.size - 1] = $3->value.fval;
             $$ = val;
+        }
+        else if($1->type == _FLOAT_MAT && $3->type == _FLOAT_ARR){
+            ASTNode *val = $1;
+            void *result = realloc(val->value.fmat.array, (++val->value.fmat.n)* sizeof(farray*));
+            if (result == NULL){
+                printf("Espacio lleno");
+                exit(EXIT_FAILURE);
+            }
+            farray *inside = malloc(sizeof(farray));
+            inside->array =  $3->value.farr.array;
+            inside->size =  $3->value.farr.size;
+            val->value.fmat.array[val->value.fmat.n - 1] = inside;
+            $$ = val;
         }else{
             printf("Los arreglos deben ser del mismo tipo");
             exit(EXIT_FAILURE);
@@ -136,10 +149,12 @@ array:
             *var = $1->value.fval;
             $$ = createFloatArrNode(var,1);
         }else if ($1->type == _FLOAT_ARR){
-            farray *var = malloc(sizeof(farray));
-            *var.array = $1->value.farray;
-            $$ = createFloatArrNode(var,1);
-
+            farray **var = malloc(sizeof(farray*));
+            farray *inside = malloc(sizeof(farray));
+            inside->array =  $1->value.farr.array;
+            inside->size =  $1->value.farr.size;
+            *var = inside;
+            $$ = createFloatMatNode(var,1,1);
         }else{
             printf("No se permiten arreglos del tipo %s", get_enum_name($1->type));
             exit(EXIT_FAILURE);

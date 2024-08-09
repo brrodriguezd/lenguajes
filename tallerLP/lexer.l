@@ -6,11 +6,11 @@ char *quitar_comillas(char *str);
 MINUSCULAS  [a-z]
 DIGITO      [0-9]
 ALFABETO    [A-Z]
-COMENTARIO  "//".*\n
+COMENTARIO  "//".*
 BLOQUEC     "/*"(.*\n)*"*/"\n
 ESPACIOS    [ \t\r\n]+
-ENTERO      {DIGITO}+
-FLOTANTE    {DIGITO}+"."{DIGITO}+
+ENTERO      -?{DIGITO}+
+FLOTANTE    -?{DIGITO}+"."{DIGITO}+
 CADENA      \"{MINUSCULAS}+\"
 NOMBRE      {MINUSCULAS}+
 
@@ -35,6 +35,12 @@ NOMBRE      {MINUSCULAS}+
 "]"         { return RS; }
 ";"         { return SEMICOLON; }
 "size"      { return SIZE; }
+"beta"      { return B; }
+"alpha"     { return A; }
+"tau"       { return TAU; }
+"n"         { return N; }
+"m"         { return M; }
+"matriz"    { return MATRIZ;}
 "categoria" { return CAT; }
 "str_mult"  { return TYPE_CAD_MULT; }
 

@@ -44,6 +44,12 @@ enum types {
   _CAT,
   _CADE_MULTI,
   _aCADE_MULTI,
+  _MATRIZ,
+  _A,
+  _B,
+  _N,
+  _M,
+  _TAU,
 };
 
 char *get_enum_name(enum types type);

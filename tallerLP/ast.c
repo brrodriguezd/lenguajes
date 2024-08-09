@@ -73,7 +73,7 @@ ASTNode *createFloatMatNode(farray **farr, int n, int m) {
 ASTNode *createModeloNode(float alpha, int n, float *beta, int m, float *tau,
                           farray **matriz) {
   ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
-  node->type = _FLOAT_ARR;
+  node->type = _MODELO;
   node->value.modelo.alpha = alpha;
   node->value.modelo.n = n;
   node->value.modelo.beta = beta;
@@ -155,15 +155,12 @@ void printAST(ASTNode *node, int level) {
     }
     printf("]\n");
   } else if (node->type == _FLOAT_MAT) {
-    printf("%s[%d][%d]: [", get_enum_name(node->type), node->value.fmat.n,
+    printf("%s[%d][%d]: \n", get_enum_name(node->type), node->value.fmat.n,
            node->value.fmat.m);
-    printAST(createFloatArrNode(node->value.fmat.array[0][0].array,
-                                node->value.fmat.array[0][0].size),
-             0);
-    for (int i = 1; i < node->value.fmat.n; i++) {
+    for (int i = 0; i < node->value.fmat.n; i++) {
       for (int j = 0; j < node->value.fmat.m; j++) {
-        printAST(createFloatArrNode(node->value.fmat.array[i][j].array,
-                                    node->value.fmat.array[i][j].size),
+        printAST(createFloatArrNode(node->value.fmat.array[i * j + i][0].array,
+                                    node->value.fmat.array[i * j + 1][0].size),
                  level + 1);
       }
     }
@@ -171,6 +168,26 @@ void printAST(ASTNode *node, int level) {
     printf("%s: %s\n", get_enum_name(node->type), node->value.sval);
   } else if (node->type == _ALFABETO) {
     printf("%s: %s\n", get_enum_name(node->type), node->value.sval);
+  } else if (node->type == _MODELO) {
+    printf("%s: alpha: %f, N: %d, M: %d \nbeta: ", get_enum_name(node->type),
+           node->value.modelo.alpha, node->value.modelo.n,
+           node->value.modelo.m);
+    printAST(createFloatArrNode(node->value.modelo.beta, node->value.modelo.n),
+             level);
+    for (int i = 0; i < level; i++) {
+      printf("\t");
+    }
+    printf("tau: \n");
+    printAST(createFloatArrNode(node->value.modelo.tau, node->value.modelo.m),
+             level);
+    for (int i = 0; i < level; i++) {
+      printf("\t");
+    }
+    printf("matriz: \n");
+    printAST(createFloatMatNode(node->value.modelo.matriz, node->value.modelo.n,
+                                node->value.modelo.m),
+             level);
+
   } else {
     printf("%s\n", get_enum_name(node->type));
   }
@@ -655,12 +672,15 @@ ASTNode *executeAST(ASTNode *node) {
         printf(",%f", lp->value.farr.array[i]);
       }
       printf("]\n");
-
     } else if (lp->type == _CADE_MULTI) {
       for (int i = 0; i < lp->value.cadena_m.size; i++) {
         printf("%c: %d\n", lp->value.cadena_m.cadena[i],
                lp->value.cadena_m.counts[i]);
       }
+    } else if (lp->type == _FLOAT_MAT) {
+      printAST(lp, 0);
+    } else if (lp->type == _MODELO) {
+      printAST(lp, 0);
     } else {
       printf("ERROR: No es una expresión imprimible\n");
     }
@@ -823,6 +843,8 @@ ASTNode *executeAST(ASTNode *node) {
         matriz->type != _FLOAT_MAT) {
       printf("ERROR: Asignacion de tipo en CADE_MULTI\n");
     }
+    farray *matrizz = malloc(sizeof(farray));
+    matriz->value.modelo.matriz = &(matrizz);
     ASTNode *new_node = createModeloNode(
         alpha->value.fval, n->value.ival, beta->value.farr.array, m->value.ival,
         tau->value.farr.array, matriz->value.fmat.array);
@@ -832,7 +854,91 @@ ASTNode *executeAST(ASTNode *node) {
     insert(node->left->value.identifier, new_node);
     return NULL;
   }
+  case _N: {
+    ASTNode *lp = executeAST(node->left);
+    if (lp == NULL) {
+      printf("ERROR: _SVARR\n");
+      return NULL;
+    }
+    if (lp->type != _MODELO) {
+      printf("error");
+      return NULL;
+    }
+    return createIntNode(lp->value.modelo.n);
+    printf("ERROR: \n");
     return NULL;
+  }
+  case _M: {
+    ASTNode *lp = executeAST(node->left);
+    if (lp == NULL) {
+      printf("ERROR: _SVARR\n");
+      return NULL;
+    }
+    if (lp->type != _MODELO) {
+      printf("error");
+      return NULL;
+    }
+    return createIntNode(lp->value.modelo.m);
+    printf("ERROR: \n");
+    return NULL;
+  }
+  case _B: {
+    ASTNode *lp = executeAST(node->left);
+    if (lp == NULL) {
+      printf("ERROR: _SVARR\n");
+      return NULL;
+    }
+    if (lp->type != _MODELO) {
+      printf("error");
+      return NULL;
+    }
+    return createFloatArrNode(lp->value.modelo.beta, lp->value.modelo.n);
+    printf("ERROR: \n");
+    return NULL;
+  }
+  case _A: {
+    ASTNode *lp = executeAST(node->left);
+    if (lp == NULL) {
+      printf("ERROR: _SVARR\n");
+      return NULL;
+    }
+    if (lp->type != _MODELO) {
+      printf("error");
+      return NULL;
+    }
+    return createFloatNode(lp->value.modelo.alpha);
+    printf("ERROR: \n");
+    return NULL;
+  }
+  case _TAU: {
+    ASTNode *lp = executeAST(node->left);
+    if (lp == NULL) {
+      printf("ERROR: _SVARR\n");
+      return NULL;
+    }
+    if (lp->type != _MODELO) {
+      printf("error");
+      return NULL;
+    }
+    return createFloatArrNode(lp->value.modelo.tau, lp->value.modelo.m);
+    printf("ERROR: \n");
+    return NULL;
+  }
+  case _MATRIZ: {
+    ASTNode *lp = executeAST(node->left);
+    if (lp == NULL) {
+      printf("ERROR: _SVARR\n");
+      return NULL;
+    }
+    if (lp->type != _MODELO) {
+      printf("error");
+      return NULL;
+    }
+    return createFloatMatNode(lp->value.modelo.matriz, lp->value.modelo.n,
+                              lp->value.modelo.m);
+    printf("ERROR: \n");
+    return NULL;
+  }
   default:
     printf("ERROR: Nodo AST no reconocido %s\n", get_enum_name(node->type));
     return NULL;
@@ -923,6 +1029,18 @@ char *get_enum_name(enum types type) {
     return "matriz float";
   case _aFLOAT_MAT:
     return "Asignar matriz float";
+  case _MATRIZ:
+    return "sacar matriz del modelo";
+  case _N:
+    return "sacar n del modelo";
+  case _M:
+    return "sacar m del modelo";
+  case _A:
+    return "sacar a del modelo";
+  case _B:
+    return "sacar b del modelo";
+  case _TAU:
+    return "sacar b del modelo";
   default:
     return "enum_error";
   }

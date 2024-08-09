@@ -28,6 +28,7 @@ int yylex(void);
 %token <ival> INT
 %token <fval> FLOAT
 %token <cval> ALFABETO
+%token A B N M MATRIZ TAU
 %token ASSIGN TYPE_INT TYPE_FLOAT TYPE_CADENA TYPE_MODELO  TYPE_CAD_MULT
 %token WHILE IF ELSE THEN
 %token LB RB LP RP LS RS
@@ -37,8 +38,8 @@ int yylex(void);
 
 %left EQ NE LE GE LT GT
 %right PLUS MINUS CAT
-%left MUL DIV MOD SIZE 
-%right LS
+%left MUL DIV MOD SIZE
+%right LS MATRIZ A B N M TAU
 %token PRINT
 
 
@@ -86,6 +87,12 @@ expr:
     | expr MOD expr { $$ = createNode(_MOD, $1, $3); }
     | expr SIZE { $$ = createNode(_SIZE, $1, NULL); }
     | expr CAT { $$ = createNode(_CAT, $1, NULL); }
+    | expr MATRIZ { $$ = createNode(_MATRIZ, $1, NULL); }
+    | expr N { $$ = createNode(_N, $1, NULL); }
+    | expr M { $$ = createNode(_M, $1, NULL); }
+    | expr A { $$ = createNode(_A, $1, NULL); }
+    | expr B { $$ = createNode(_B, $1, NULL); }
+    | expr TAU { $$ = createNode(_TAU, $1, NULL); }
     ;
 
 condicion:
@@ -118,23 +125,25 @@ array:
                 printf("Espacio lleno");
                 exit(EXIT_FAILURE);
             }
+            val->value.farr.array = result;
             val->value.farr.array[val->value.farr.size - 1] = $3->value.fval;
             $$ = val;
         }
         else if($1->type == _FLOAT_MAT && $3->type == _FLOAT_ARR){
             ASTNode *val = $1;
-            void *result = realloc(val->value.fmat.array, (++val->value.fmat.n)* sizeof(farray*));
+            void *result = realloc(val->value.fmat.array, (++val->value.fmat.n) * sizeof(farray*));
             if (result == NULL){
                 printf("Espacio lleno");
                 exit(EXIT_FAILURE);
             }
-            farray *inside = malloc(sizeof(farray));
+            val->value.fmat.array = result;
+            farray * inside = malloc(sizeof (farray));
             inside->array =  $3->value.farr.array;
             inside->size =  $3->value.farr.size;
             val->value.fmat.array[val->value.fmat.n - 1] = inside;
             $$ = val;
         }else{
-            printf("Los arreglos deben ser del mismo tipo");
+            printf("Los arreglos deben ser del mismo tipo %s, %s\n", $1->type, $3->type);
             exit(EXIT_FAILURE);
         }
     }

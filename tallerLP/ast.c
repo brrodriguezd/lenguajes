@@ -537,7 +537,7 @@ ASTNode *executeAST(ASTNode *node) {
   case _WHILE: {
     ASTNode *lp = executeAST(node->left);
     if (lp == NULL) {
-      printf("ERROR: _IF\n");
+      printf("ERROR: _WHILE\n");
       return NULL;
     }
     while (executeAST(node->left)->value.ival) {
@@ -573,6 +573,7 @@ ASTNode *executeAST(ASTNode *node) {
     }
     if (rp->type != _INT) {
       printf("ERROR: Asignacion de tipo %s en INT\n", get_enum_name(rp->type));
+      return NULL;
     }
     insert(node->left->value.identifier, rp);
     return NULL;
